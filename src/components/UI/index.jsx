@@ -1,8 +1,18 @@
-import React, { useRef, useState } from "react";
-import { ImageData, MenuData } from "@/constant/data";
+import React, { useContext, useRef, useState } from "react";
+import { productVariation } from "@/constant/data";
 import { useFrame, useThree } from "@react-three/fiber";
 import { Quaternion, Vector3 } from "three";
 import { Container, Image, Root, Text } from "@react-three/uikit";
+import { StoreContext } from "@/context/store";
+import { Slider } from "@/components/default/slider";
+import {
+  Eclipse,
+  Package,
+  Star,
+  User,
+  Image as ImageIcon,
+} from "@react-three/uikit-lucide";
+import { Button } from "../default/button.jsx";
 
 const FloatingUI = ({
   distance = 0.56,
@@ -17,7 +27,12 @@ const FloatingUI = ({
   const quaternionHelper = useRef(new Quaternion());
   const currentQuaternion = useRef(new Quaternion());
 
-  const [activeTab, setActiveTab] = useState("Home");
+  const { currentVariation, setCurrentVariation } = useContext(StoreContext);
+
+  const handleVariationClick = (el) => {
+    setCurrentVariation(el);
+  };
+
   useFrame(() => {
     if (!rootRef.current) return;
 
@@ -50,9 +65,6 @@ const FloatingUI = ({
     rootRef.current.quaternion.copy(currentQuaternion.current);
   });
 
-  const handleTabClick = (tab) => {
-    setActiveTab(tab);
-  };
   return (
     <group ref={rootRef}>
       <Root
@@ -64,46 +76,111 @@ const FloatingUI = ({
         sizeX={0.2}
         sizeY={0.2}
       >
-        <Container flexDirection={"column"}>
-          <Container
-            flexDirection="row"
-            overflow="scroll"
-            scrollbarWidth={4}
-            padding="4"
-            gap={16}
-          >
-            {MenuData.map((tab) => (
-              <Text
-                onClick={() => handleTabClick(tab.name)}
-                fontSize={8}
-                width={100}
-              >
-                {tab.name}
-              </Text>
-            ))}
-          </Container>
-
-          <Container
-            flexShrink={1}
-            flexDirection="row"
-            flexWrap={"wrap"}
-            alignItems="center"
-            justifyContent="center"
-            overflow="scroll"
-            gap={8}
-            marginTop={4}
-          >
-            {ImageData.map((i) => (
-              <ImageContainer key={i.name} data={i} activeTab={activeTab} />
-            ))}
-          </Container>
-        </Container>
+        <ProductDetail
+          variation={currentVariation}
+          handleVariationClick={handleVariationClick}
+        />
       </Root>
     </group>
   );
 };
 
 export default FloatingUI;
+
+const ProductDetail = ({ variation, handleVariationClick }) => {
+  const { sku, name, subDesc, price, type } = variation;
+  const { currentRotation, setCurrentRotation } = useContext(StoreContext);
+
+  const handleChange = (val) => {
+    setCurrentRotation(val);
+  };
+
+  return (
+    <Container flexDirection="column" padding="4">
+      <Container
+        width="100%"
+        height="80%"
+        flexDirection="column"
+        gap={2}
+        overflow="scroll"
+        flexGrow="1"
+      >
+        <Text fontSize={4} color="#535665">
+          {sku}
+        </Text>
+        <Text fontSize={6} marginBottom={4}>
+          {name}
+        </Text>
+        <Text fontSize={4} color="#535665">
+          {subDesc}
+        </Text>
+
+        <Text fontSize={6} fontWeight="semi-bold" marginTop={5}>
+          Rs.{price}.00
+        </Text>
+        <Text fontSize={3} fontWeight="bold" color="#199892">
+          inclusive of all taxes
+        </Text>
+
+        <Container flexDirection="row" gap="2" marginY={"4"}>
+          <Text fontSize={4} color="#535665">
+            Color:
+          </Text>{" "}
+          <Text fontSize={4} color="#a3a3a3">
+            {type}
+          </Text>
+        </Container>
+
+        <Container width={"100%"} height={20} gap="3">
+          {productVariation.map((el) => (
+            <Image
+              borderWidth={0.2}
+              borderRadius={2}
+              src={el.thumbnail}
+              objectFit="cover"
+              aspectRatio={1}
+              onClick={() => handleVariationClick(el)}
+            />
+          ))}
+        </Container>
+
+        <Container
+          backgroundColor="black"
+          height="12"
+          justifyContent={"center"}
+          alignItems="center"
+          borderRadius="3"
+          borderWidth="1"
+          paddingY="1"
+        >
+          <Package color="white" marginRight={2} width={6} height={6} />
+          <Text fontWeight="semi-bold" color="white" fontSize={4}>
+            Add to Cart
+          </Text>
+        </Container>
+      </Container>
+      <Container
+        justifyContent="space-between"
+        alignItems="center"
+        flexDirection="row"
+        overflow="scroll"
+        height="20%"
+        paddingX="2"
+      >
+        <Text fontSize={4} marginBottom="4">
+          Rotation
+        </Text>
+        <Slider
+          max={360}
+          step={1}
+          width={"80%"}
+          value={currentRotation}
+          onValueChange={handleChange}
+        />
+      </Container>
+    </Container>
+  );
+};
 
 const ImageContainer = ({ data, activeTab }) => {
   return (

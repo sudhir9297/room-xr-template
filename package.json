@@ -15,6 +15,7 @@
     "@react-three/uikit-default": "^0.8.4",
     "@react-three/uikit-lucide": "^0.8.4",
     "@react-three/xr": "^6.4.12",
+    "gsap": "^3.12.5",
     "next": "14.2.2",
     "r3f-perf": "^7.2.3",
     "react": "^18.0.0",

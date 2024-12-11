@@ -1,51 +1,87 @@
-export const MenuData = [
+export const productVariation = [
   {
-    name: "Home",
-  },
-  {
-    name: "About",
-  },
-  {
-    name: "Contact",
-  },
-  {
-    name: "Pricing",
-  },
-  {
-    name: "Blog",
-  },
-];
+    id: 1,
+    sku: "HEEL-RED-X008",
+    name: "Crimson Flame Stiletto",
+    subDesc:
+      "A sleek red Stiletto pump with a high heel, perfect for adding bold elegance to any outfit.",
+    totalReview: 42,
+    rating: 4,
+    price: 7360,
+    thumbnail: "/thumb/red/1-1.webp",
+    type: "red",
+    variation: [
+      "/thumb/red/1-1.webp",
+      "/thumb/red/1-2.webp",
+      "/thumb/red/1-3.webp",
+      "/thumb/red/1-4.webp",
+    ],
 
-export const ImageData = [
-  {
-    name: "Thinking",
-    cover:
-      "https://images.unsplash.com/photo-1615247001958-f4bc92fa6a4a?w=300&dpr=2&q=80",
+    meshNameList: {
+      sole: {
+        color: "#111111",
+        metalness: 0.0001,
+        roughness: 0.918182,
+      },
+      inner_side: { color: "#E7E7E7", metalness: 0.0001, roughness: 0.822727 },
+      inner_base: { color: "#E7B39C", metalness: 0.0001, roughness: 0.790909 },
+      body: { color: "#C90023", metalness: 0.1, roughness: 0.07273 },
+    },
   },
   {
-    name: "Functional ",
-
-    cover:
-      "https://images.unsplash.com/photo-1513745405825-efaf9a49315f?w=300&dpr=2&q=80",
+    id: 2,
+    sku: "HEEL-BLACK-X008",
+    name: "Obsidian Luxe Stiletto",
+    subDesc:
+      "A chic brown Stiletto pump with a slender heel, offering understated sophistication and versatile style.",
+    totalReview: 22,
+    rating: 3,
+    price: 9020,
+    thumbnail: "/thumb/black/2-1.webp",
+    type: "black",
+    variation: [
+      "/thumb/black/2-1.webp",
+      "/thumb/black/2-2.webp",
+      "/thumb/black/2-3.webp",
+      "/thumb/black/2-4.webp",
+    ],
+    meshNameList: {
+      sole: {
+        color: "#E8DDCD",
+        metalness: 0.0001,
+        roughness: 0.918182,
+      },
+      inner_side: { color: "#C1A995", metalness: 0.0001, roughness: 0.822727 },
+      inner_base: { color: "#DFBFB0", metalness: 0.0001, roughness: 0.890909 },
+      body: { color: "#22241E", metalness: 0.1, roughness: 0.07273 },
+    },
   },
   {
-    name: "React ",
-    cover:
-      "https://images.unsplash.com/photo-1614113489855-66422ad300a4?w=300&dpr=2&q=80",
-  },
-  {
-    name: "Stateful ",
-    cover:
-      "https://images.unsplash.com/photo-1446185250204-f94591f7d702?w=300&dpr=2&q=80",
-  },
-  {
-    name: "Async ",
-    cover:
-      "https://images.unsplash.com/photo-1468817814611-b7edf94b5d60?w=300&dpr=2&q=80",
-  },
-  {
-    name: "The Art ",
-    cover:
-      "https://images.unsplash.com/photo-1490300472339-79e4adc6be4a?w=300&dpr=2&q=80",
+    id: 3,
+    sku: "HEEL-YELLOW-X008",
+    name: "Yellow Glimmer Stiletto",
+    subDesc:
+      "A glamorous gold Stiletto pump with a high, shimmering heel that instantly elevates your look with luxe flair.",
+    totalReview: 12,
+    rating: 4,
+    price: 8118,
+    thumbnail: "/thumb/yellow/3-1.webp",
+    type: "yellow",
+    variation: [
+      "/thumb/yellow/3-1.webp",
+      "/thumb/yellow/3-2.webp",
+      "/thumb/yellow/3-3.webp",
+      "/thumb/yellow/3-4.webp",
+    ],
+    meshNameList: {
+      sole: {
+        color: "#111111",
+        metalness: 0.0001,
+        roughness: 0.918182,
+      },
+      inner_side: { color: "#E7E7E7", metalness: 0.0001, roughness: 0.822727 },
+      inner_base: { color: "#E7B39C", metalness: 0.0001, roughness: 0.790909 },
+      body: { color: "#FECD33", metalness: 0.1, roughness: 0.07273 },
+    },
   },
 ];
