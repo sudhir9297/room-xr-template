@@ -1,0 +1,39 @@
+import { Sky, Stars, useHelper } from "@react-three/drei";
+import { useRef } from "react";
+import * as THREE from "three";
+
+export default function Lights() {
+  const directionalLightRef = useRef();
+
+  // useHelper(directionalLightRef, THREE.DirectionalLightHelper, 1);
+
+  return (
+    <>
+      <Sky sunPosition={[0, 2, 0]} inclination={0.52} scale={10} />
+      <Stars
+        radius={120}
+        depth={50}
+        count={5000}
+        factor={4}
+        saturation={0}
+        fade
+        speed={1}
+      />
+      <directionalLight
+        castShadow
+        shadow-normalBias={0.06}
+        position={[20, 30, 10]}
+        intensity={5}
+        shadow-mapSize={[1024, 1024]}
+        shadow-camera-near={1}
+        shadow-camera-far={50}
+        shadow-camera-top={50}
+        shadow-camera-right={50}
+        shadow-camera-bottom={-50}
+        shadow-camera-left={-50}
+        ref={directionalLightRef}
+      />
+      <ambientLight intensity={2} />
+    </>
+  );
+}
