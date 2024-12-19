@@ -1,6 +1,6 @@
 import React from "react";
-import Floor from "./Floor";
 import { Physics } from "@react-three/rapier";
+import Floor from "./Floor";
 import RigidObjects from "./RigidObjects";
 import { useControls } from "leva";
 import Slope from "./Slope";
@@ -11,9 +11,9 @@ const Experience = () => {
   });
 
   return (
-    <Physics timeStep="vary" debug={physics}>
-      <RigidObjects />
-      <Floor />
+    <Physics gravity={[0, -2, 0]} timeStep="vary" debug={physics}>
+      {/* <RigidObjects /> */}
+      {/* <Floor /> */}
       <Slope />
     </Physics>
   );

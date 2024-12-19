@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { useRapier } from "@react-three/rapier";
 import { useFrame } from "@react-three/fiber";
+import { useModelStore } from "@/Store";
 
 // Custom hook to manage physics objects
 export const usePhysicsObjects = () => {
-  const [dynamicObjects, setDynamicObjects] = useState([]);
-  const [staticObjects, setStaticObjects] = useState([]);
   const { world, rapier } = useRapier();
+
+  const { dynamicObjects, addDynamicObject, addStaticObject } = useModelStore();
 
   // Centralized physics object addition function
   const addPhysics = (
@@ -90,9 +91,9 @@ export const usePhysicsObjects = () => {
           };
 
           if (rigidBodyType === "dynamic") {
-            setDynamicObjects((prev) => [...prev, physicsObject]);
+            addDynamicObject(physicsObject);
           } else {
-            setStaticObjects((prev) => [...prev, physicsObject]);
+            addStaticObject(physicsObject);
           }
         }
       });
@@ -106,9 +107,9 @@ export const usePhysicsObjects = () => {
       };
 
       if (rigidBodyType === "dynamic") {
-        setDynamicObjects((prev) => [...prev, physicsObject]);
+        addDynamicObject(physicsObject);
       } else {
-        setStaticObjects((prev) => [...prev, physicsObject]);
+        addStaticObject(physicsObject);
       }
     }
 
@@ -145,9 +146,5 @@ export const usePhysicsObjects = () => {
 
   return {
     addPhysics,
-    dynamicObjects,
-    staticObjects,
-    setDynamicObjects,
-    setStaticObjects,
   };
 };

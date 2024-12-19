@@ -3,16 +3,13 @@ import React, { Suspense } from "react";
 import { Perf } from "r3f-perf";
 import { Canvas } from "@react-three/fiber";
 import { createXRStore, XR } from "@react-three/xr";
-import { Grid, OrbitControls } from "@react-three/drei";
+import { OrbitControls } from "@react-three/drei";
 
 import Experience from "./Scene/Experience";
 import Lights from "./Light";
 import { Leva } from "leva";
 
-const store = createXRStore({
-  hand: { teleportPointer: false },
-  controller: { teleportPointer: false },
-});
+const store = createXRStore();
 
 const HomePage = () => {
   return (
@@ -25,19 +22,13 @@ const HomePage = () => {
       </button>
       <Leva collapsed />
       <Canvas
+        dpr={[1, 2]}
         shadows
-        camera={{ position: [30, 20, 30], fov: 45 }}
+        camera={{ position: [5, 5, 5], fov: 45 }}
         gl={{ localClippingEnabled: true }}
       >
         <Suspense fallback={null}>
-          <Grid
-            args={[300, 300]}
-            sectionColor={"lightgray"}
-            cellColor={"gray"}
-            position={[0, -0.99, 0]}
-            userData={{ camExcludeCollision: true }} // this won't be collide by camera ray
-          />
-          <Perf position="top-left" />
+          <Perf position="bottom-left" />
           <Lights />
           <OrbitControls />
           <XR store={store}>

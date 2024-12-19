@@ -1,7 +1,9 @@
-import { useGLTF } from "@react-three/drei";
-import { useEffect } from "react";
 import * as THREE from "three";
+import { useEffect } from "react";
+import { useGLTF } from "@react-three/drei";
 import { usePhysicsObjects } from "@/hooks/usePhysicsHooks";
+import { usePickObject } from "@/hooks/usePickObject";
+import { useFrame } from "@react-three/fiber";
 
 export default function Slope() {
   const slopePlane = useGLTF("./slope.glb");
@@ -9,19 +11,14 @@ export default function Slope() {
 
   useEffect(() => {
     slopePlane.scene.traverse((child) => {
-      if (
-        child instanceof THREE.Mesh &&
-        child.material instanceof THREE.MeshStandardMaterial
-      ) {
+      if (child instanceof THREE.Mesh) {
         child.receiveShadow = true;
+
         const name = child.name?.split("_") || [];
 
-        // if (child.name === "nav_mesh") {
-        //   child.visible = false;
-        //   child.side = 1;
-        // addPhysics(child, type, null, false, null, null);
-        //   return;
-        // }
+        if (name.includes("ignore")) {
+          child.pointerEvents = "none";
+        }
 
         if (name[0] === "trimesh") {
           const type = name[1];
@@ -33,5 +30,11 @@ export default function Slope() {
     });
   }, []);
 
-  return <primitive object={slopePlane.scene} />;
+  const bind = usePickObject();
+
+  return (
+    <group {...bind}>
+      <primitive object={slopePlane.scene} />
+    </group>
+  );
 }
