@@ -24,7 +24,7 @@ const HomePage = () => {
       <Canvas
         dpr={[1, 2]}
         shadows
-        camera={{ position: [5, 5, 5], fov: 45 }}
+        camera={{ position: [2, 2, 2], fov: 45 }}
         gl={{ localClippingEnabled: true }}
       >
         <Suspense fallback={null}>

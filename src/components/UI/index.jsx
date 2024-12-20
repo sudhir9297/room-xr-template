@@ -1,18 +1,10 @@
-import React, { useContext, useRef, useState } from "react";
+import React, { useRef } from "react";
 import { productVariation } from "@/constant/data";
 import { useFrame, useThree } from "@react-three/fiber";
 import { Quaternion, Vector3 } from "three";
 import { Container, Image, Root, Text } from "@react-three/uikit";
-import { StoreContext } from "@/context/store";
-import { Slider } from "@/components/default/slider";
-import {
-  Eclipse,
-  Package,
-  Star,
-  User,
-  Image as ImageIcon,
-} from "@react-three/uikit-lucide";
-import { Button } from "../default/button.jsx";
+import { Package } from "@react-three/uikit-lucide";
+import { useModelStore } from "@/Store/index.js";
 
 const FloatingUI = ({
   distance = 0.56,
@@ -26,12 +18,6 @@ const FloatingUI = ({
   const positionHelper = useRef(new Vector3());
   const quaternionHelper = useRef(new Quaternion());
   const currentQuaternion = useRef(new Quaternion());
-
-  const { currentVariation, setCurrentVariation } = useContext(StoreContext);
-
-  const handleVariationClick = (el) => {
-    setCurrentVariation(el);
-  };
 
   useFrame(() => {
     if (!rootRef.current) return;
@@ -68,18 +54,13 @@ const FloatingUI = ({
   return (
     <group ref={rootRef}>
       <Root
-        borderRadius={4}
         positionType="relative"
-        backgroundColor="white"
         anchorY="top"
         pixelSize={0.002}
         sizeX={0.2}
         sizeY={0.2}
       >
-        <ProductDetail
-          variation={currentVariation}
-          handleVariationClick={handleVariationClick}
-        />
+        <ProductDetail />
       </Root>
     </group>
   );
@@ -87,13 +68,78 @@ const FloatingUI = ({
 
 export default FloatingUI;
 
-const ProductDetail = ({ variation, handleVariationClick }) => {
-  const { sku, name, subDesc, price, type } = variation;
-  const { currentRotation, setCurrentRotation } = useContext(StoreContext);
+const ProductDetail = ({ handleVariationClick }) => {
+  const { selectedObject, setCurrentVariation, removeSelectedObject } =
+    useModelStore();
 
-  const handleChange = (val) => {
-    setCurrentRotation(val);
-  };
+  const { thumbnail, name, desc, variation } = selectedObject;
+
+  return (
+    <Container flexDirection="column" padding="4">
+      <Container
+        justifyContent="flex-end"
+        alignItems="flex-end"
+        marginBottom={2}
+      >
+        <Text
+          fontSize={4}
+          width={8}
+          height={8}
+          padding={2.5}
+          borderRadius={12}
+          color="#535665"
+          backgroundColor="white"
+          fontWeight="semi-bold"
+          onClick={() => removeSelectedObject()}
+        >
+          X
+        </Text>
+      </Container>
+      <Container backgroundColor="white" padding={4} borderRadius={4}>
+        <Container
+          height="100%"
+          flexDirection="column"
+          gap={4}
+          overflow="scroll"
+          scrollbarWidth={0}
+        >
+          <Container
+            width="100%"
+            height="100%"
+            justifyContent="center"
+            backgroundColor="#f2f2f2"
+            borderRadius={2.5}
+          >
+            <Image
+              src={thumbnail}
+              objectFit="cover"
+              aspectRatio={1}
+              onClick={() => handleVariationClick(el)}
+            />
+          </Container>
+          <Text fontSize={6} fontWeight="semi-bold">
+            {name}
+          </Text>
+          <Text fontSize={4} color="#535665">
+            {desc}
+          </Text>
+
+          <Container width={"100%"} height={20} gap="3" marginTop={4}>
+            {variation?.map((el) => (
+              <Image
+                borderWidth={0.2}
+                borderRadius={2}
+                src={el.thumbnail}
+                objectFit="cover"
+                aspectRatio={1}
+                onClick={() => setCurrentVariation(el)}
+              />
+            ))}
+          </Container>
+        </Container>
+      </Container>
+    </Container>
+  );
 
   return (
     <Container flexDirection="column" padding="4">
@@ -158,25 +204,6 @@ const ProductDetail = ({ variation, handleVariationClick }) => {
             Add to Cart
           </Text>
         </Container>
-      </Container>
-      <Container
-        justifyContent="space-between"
-        alignItems="center"
-        flexDirection="row"
-        overflow="scroll"
-        height="20%"
-        paddingX="2"
-      >
-        <Text fontSize={4} marginBottom="4">
-          Rotation
-        </Text>
-        <Slider
-          max={360}
-          step={1}
-          width={"80%"}
-          value={currentRotation}
-          onValueChange={handleChange}
-        />
       </Container>
     </Container>
   );
