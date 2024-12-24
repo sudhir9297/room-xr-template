@@ -7,10 +7,12 @@ import Slope from "./Slope";
 import { Player } from "./Player";
 import FloatingUI from "../UI";
 import { useModelStore } from "@/Store";
+import SolarSystem from "./Test";
+import UiTest from "../UI/uiTest";
 
 const Experience = () => {
   const { physics } = useControls("World Settings", {
-    physics: false,
+    physics: true,
   });
 
   const { selectedObject } = useModelStore();
@@ -18,12 +20,14 @@ const Experience = () => {
 
   return (
     <Physics gravity={[0, -2, 0]} timeStep="vary" debug={physics}>
-      {/* <RigidObjects /> */}
-      {/* <Floor /> */}
-      {isSelected ? <FloatingUI /> : null}
+      <RigidObjects />
+      <Floor />
+      {/* {isSelected ? <FloatingUI /> : null}
+      <Slope /> */}
 
       <Player />
-      <Slope />
+      {/* <SolarSystem /> */}
+      {/* <UiTest /> */}
     </Physics>
   );
 };

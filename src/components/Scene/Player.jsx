@@ -1,10 +1,69 @@
+import { useFrame } from "@react-three/fiber";
 import { CapsuleCollider, RigidBody } from "@react-three/rapier";
 import { useXRControllerLocomotion, XROrigin } from "@react-three/xr";
 import { useRef } from "react";
-import { Quaternion } from "three";
+import { Quaternion, Vector3 } from "three";
 
 export const Player = () => {
   const userRigidBodyRef = useRef(null);
+  const dragGroupRef = useRef(null);
+  const uiRef = useRef();
+
+  const isDragging = useRef(false);
+  const lastPosition = useRef(new Vector3());
+
+  const orbitAngle = useRef(0);
+  const ORBIT_RADIUS = 2;
+
+  const updateCubePosition = (pointerPosition = null) => {
+    if (!userRigidBodyRef.current || !dragGroupRef.current) return;
+
+    const rigidBodyPosition = userRigidBodyRef.current.translation();
+    let direction;
+
+    if (pointerPosition && isDragging.current) {
+      // Calculate angle from pointer position
+      const dx = pointerPosition.x - rigidBodyPosition.x;
+      const dz = pointerPosition.z - rigidBodyPosition.z;
+      orbitAngle.current = Math.atan2(dz, dx);
+    }
+
+    // Calculate position using orbital angle
+    direction = new Vector3(
+      Math.cos(orbitAngle.current),
+      0,
+      Math.sin(orbitAngle.current)
+    );
+
+    direction.multiplyScalar(ORBIT_RADIUS);
+
+    lastPosition.current.set(
+      rigidBodyPosition.x + direction.x,
+      rigidBodyPosition.y,
+      rigidBodyPosition.z + direction.z
+    );
+
+    // Update cube's position and orientation
+    dragGroupRef.current.position.copy(lastPosition.current);
+    dragGroupRef.current.lookAt(
+      rigidBodyPosition.x,
+      rigidBodyPosition.y,
+      rigidBodyPosition.z
+    );
+
+    uiRef.current.lookAt(
+      rigidBodyPosition.x,
+      rigidBodyPosition.y,
+      rigidBodyPosition.z
+    );
+  };
+
+  useFrame((state, delta) => {
+    if (!isDragging.current) {
+      updateCubePosition();
+    }
+  });
+
   const userMove = (inputVector, rotationInfo) => {
     if (userRigidBodyRef.current) {
       const currentLinvel = userRigidBodyRef.current.linvel();
@@ -23,17 +82,56 @@ export const Player = () => {
 
   useXRControllerLocomotion(userMove);
 
+  const onPointerDown = (e) => {
+    isDragging.current = true;
+  };
+  const onPointerMove = (e) => {
+    if (
+      isDragging.current &&
+      userRigidBodyRef.current &&
+      dragGroupRef.current
+    ) {
+      updateCubePosition(e.point);
+    }
+  };
+  const onPointerUp = (e) => {
+    isDragging.current = false;
+  };
+
   return (
-    <RigidBody
-      colliders={false}
-      type="dynamic"
-      position={[0, 1, 0]}
-      enabledRotations={[false, false, false]}
-      canSleep={false}
-      ref={userRigidBodyRef}
-    >
-      <CapsuleCollider args={[0.3, 0.2]} />
-      <XROrigin position={[0, 0, 0]} />
-    </RigidBody>
+    <>
+      <RigidBody
+        colliders={false}
+        type="dynamic"
+        position={[0, 1, 0]}
+        enabledRotations={[false, false, false]}
+        canSleep={false}
+        ref={userRigidBodyRef}
+      >
+        <CapsuleCollider args={[0.3, 0.2]} />
+        <XROrigin position={[0, 0, 0]} />
+      </RigidBody>
+
+      <group ref={dragGroupRef}>
+        <mesh
+          onPointerDown={onPointerDown}
+          onPointerMove={onPointerMove}
+          onPointerUp={onPointerUp}
+          onPointerOut={onPointerUp}
+          position={[0, 0.3, 0]}
+        >
+          <boxGeometry args={[2, 0.3, 0.02]} />
+          <meshStandardMaterial color="green" />
+        </mesh>
+
+        <group ref={uiRef}>
+          <mesh position={[0, 1, 0]}>
+            <boxGeometry args={[2, 1, 0.05]} />
+            <meshStandardMaterial color="white" />
+          </mesh>
+          {/* <UI /> */}
+        </group>
+      </group>
+    </>
   );
 };

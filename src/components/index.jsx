@@ -24,9 +24,10 @@ const HomePage = () => {
       <Canvas
         dpr={[1, 2]}
         shadows
-        camera={{ position: [2, 2, 2], fov: 45 }}
+        camera={{ position: [12, 12, 12], fov: 45 }}
         gl={{ localClippingEnabled: true }}
       >
+        <color attach="background" args={["#171720"]} />
         <Suspense fallback={null}>
           <Perf position="bottom-left" />
           <Lights />
