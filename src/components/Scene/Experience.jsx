@@ -10,6 +10,7 @@ import { useModelStore } from "@/Store";
 import SolarSystem from "./Test";
 import UiTest from "../UI/uiTest";
 import { IfInSessionMode, ShowIfInSessionMode } from "@react-three/xr";
+import { Cursor } from "./GrabHelper";
 
 const Experience = () => {
   const { physics } = useControls("World Settings", {
@@ -22,9 +23,10 @@ const Experience = () => {
   return (
     <Physics gravity={[0, -2, 0]} timeStep="vary" debug={physics}>
       {/* <RigidObjects /> */}
-      <Floor />
+      {/* <Floor /> */}
       {/* {isSelected ? <FloatingUI /> : null} */}
-      {/* <Slope /> */}
+      <Slope />
+
       <IfInSessionMode allow={"immersive-vr"}>
         <Player />
       </IfInSessionMode>

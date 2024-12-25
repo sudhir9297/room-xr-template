@@ -6,17 +6,20 @@ import {
   CylinderCollider,
   RigidBody,
 } from "@react-three/rapier";
+import { useDragConstraint, useGrab } from "./GrabHelper";
+import { useRef } from "react";
 
 export default function RigidObjects() {
   const bind = usePickObject();
 
   return (
-    <group {...bind} position={[5, 0, 0]}>
+    <group {...bind} position={[0, 0, 0]}>
       {/* Rigid body boxes */}
+
       <RigidBody position={[0, 5, 2]}>
         <mesh receiveShadow castShadow>
           <boxGeometry args={[0.5, 0.5, 0.5]} />
-          <meshStandardMaterial color={"hotpink"} />
+          <meshStandardMaterial color={"red"} />
         </mesh>
       </RigidBody>
       <RigidBody position={[0, 4, 2]}>

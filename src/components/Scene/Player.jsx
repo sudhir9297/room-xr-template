@@ -5,23 +5,23 @@ import { Container, Image, Root } from "@react-three/uikit";
 import { useXRControllerLocomotion, XROrigin } from "@react-three/xr";
 import { useEffect, useRef } from "react";
 import { Quaternion, Vector3 } from "three";
+import { DraggableObject, useDragConstraint } from "./GrabHelper";
+import { Scale } from "@react-three/uikit-lucide";
 
 export const Player = () => {
   const { progress } = useProgress();
   const { camera } = useThree();
-
-  const userRigidBodyRef = useRef(null);
+  const uiRef = useRef(null);
+  const rigidBodyRef = useRef(null);
   const dragGroupRef = useRef(null);
-  const uiRef = useRef();
 
   const capsuleRef = useRef(null);
 
   const isDragging = useRef(false);
   const lastPosition = useRef(new Vector3());
-  const dragOffset = useRef(new Vector3());
 
   const orbitAngle = useRef(0);
-  const ORBIT_RADIUS = 2;
+  const ORBIT_RADIUS = 1;
 
   useEffect(() => {
     if (progress === 100) {
@@ -48,15 +48,15 @@ export const Player = () => {
     );
 
     // Update player position
-    if (userRigidBodyRef.current) {
-      userRigidBodyRef.current.setTranslation(newPosition, true);
+    if (rigidBodyRef.current) {
+      rigidBodyRef.current.setTranslation(newPosition, true);
     }
   };
 
   const updateCubePosition = (pointerPosition = null) => {
-    if (!userRigidBodyRef.current || !dragGroupRef.current) return;
+    if (!rigidBodyRef.current || !dragGroupRef.current) return;
 
-    const rigidBodyPosition = userRigidBodyRef.current.translation();
+    const rigidBodyPosition = rigidBodyRef.current.translation();
     let direction;
 
     if (pointerPosition) {
@@ -98,12 +98,6 @@ export const Player = () => {
       rigidBodyPosition.y,
       rigidBodyPosition.z
     );
-
-    uiRef.current.lookAt(
-      rigidBodyPosition.x,
-      rigidBodyPosition.y,
-      rigidBodyPosition.z
-    );
   };
 
   useFrame((state, delta) => {
@@ -113,15 +107,15 @@ export const Player = () => {
   });
 
   const userMove = (inputVector, rotationInfo) => {
-    if (userRigidBodyRef.current) {
-      const currentLinvel = userRigidBodyRef.current.linvel();
+    if (rigidBodyRef.current) {
+      const currentLinvel = rigidBodyRef.current.linvel();
       const newLinvel = {
         x: inputVector.x,
         y: currentLinvel.y,
         z: inputVector.z,
       };
-      userRigidBodyRef.current.setLinvel(newLinvel, true);
-      userRigidBodyRef.current.setRotation(
+      rigidBodyRef.current.setLinvel(newLinvel, true);
+      rigidBodyRef.current.setRotation(
         new Quaternion().setFromEuler(rotationInfo),
         true
       );
@@ -132,13 +126,10 @@ export const Player = () => {
 
   const onPointerDown = (e) => {
     isDragging.current = true;
+    e.stopPropagation();
   };
   const onPointerMove = (e) => {
-    if (
-      isDragging.current &&
-      userRigidBodyRef.current &&
-      dragGroupRef.current
-    ) {
+    if (isDragging.current && rigidBodyRef.current && dragGroupRef.current) {
       updateCubePosition(e.point);
     }
   };
@@ -154,31 +145,85 @@ export const Player = () => {
         position={[0, 1, 0]}
         enabledRotations={[false, false, false]}
         canSleep={false}
-        ref={userRigidBodyRef}
+        ref={rigidBodyRef}
       >
-        <CapsuleCollider args={[0.3, 0.2]} />
+        <CapsuleCollider args={[0.6, 0.2]} />
         <XROrigin ref={capsuleRef} position={[0, 0, 0]} />
       </RigidBody>
+      {/* <Cursor /> */}
 
       <group ref={dragGroupRef}>
-        <mesh
+        <Root
           onPointerDown={onPointerDown}
           onPointerMove={onPointerMove}
           onPointerUp={onPointerUp}
           onPointerOut={onPointerUp}
-          position={[0, 0.3, 0]}
+          positionType="relative"
+          pixelSize={0.002}
+          sizeX={0.4}
+          sizeY={0.1}
+          name="UI2"
         >
-          <boxGeometry args={[2, 0.3, 0.02]} />
-          <meshStandardMaterial color="green" />
-        </mesh>
+          <Container
+            width="100%"
+            height="100%"
+            justifyContent="center"
+            alignItems="center"
+            backgroundColor="black"
+            borderRadius={2.5}
+            name="UI3"
+          >
+            <Container
+              width="60%"
+              height="20%"
+              borderRadius={12}
+              justifyContent="center"
+              backgroundColor="#f2f2f2"
+              name="UI4"
+              // onPointerEnter={() => dragGroupRef.current.scale.setScalar(1.2)}
+              // onPointerLeave={() => dragGroupRef.current.scale.setScalar(1)}
+            ></Container>
+          </Container>
+        </Root>
 
-        <group ref={uiRef}>
-          <mesh position={[0, 1, 0]}>
-            <boxGeometry args={[2, 1, 0.05]} />
-            <meshStandardMaterial color="white" />
-          </mesh>
-          {/* <UI /> */}
-        </group>
+        <DraggableObject
+          dragConstraints={{
+            minY: 0,
+            maxY: 10,
+            minX: -5,
+            maxX: 5,
+          }}
+          lookAtTarget={{ x: 0, y: 1.5, z: 0 }}
+          rigidBodyRef={rigidBodyRef}
+        >
+          <Root
+            positionType="relative"
+            // anchorY="top"
+            pixelSize={0.002}
+            sizeX={0.5}
+            sizeY={0.5}
+            justifyContent="center"
+            alignItems="center"
+            backgroundColor="black"
+            borderRadius={2.5}
+            name="UI5"
+          >
+            <Container
+              width="60%"
+              height="60%"
+              borderRadius={12}
+              justifyContent="center"
+              alignItems="center"
+              backgroundColor="green"
+              name="UI6"
+              padding={4}
+              onPointerEnter={(e) => e.currentObject.scale.setScalar(1.2)}
+              onPointerLeave={() => dragGroupRef.current.scale.setScalar(1)}
+            >
+              <UI />
+            </Container>
+          </Root>
+        </DraggableObject>
       </group>
     </>
   );
@@ -186,27 +231,19 @@ export const Player = () => {
 
 const UI = () => {
   return (
-    <Root
-      positionType="relative"
-      anchorY="top"
-      pixelSize={0.002}
-      sizeX={1}
-      sizeY={1}
+    <Container
+      width="50%"
+      height="50%"
+      justifyContent="center"
+      backgroundColor="#f2f2f2"
+      borderRadius={2.5}
     >
-      <Container
-        width="100%"
-        height="100%"
-        justifyContent="center"
-        backgroundColor="#f2f2f2"
-        borderRadius={2.5}
-      >
-        <Image
-          src={"./texture/productThumbnail/vitra_eames.png"}
-          objectFit="cover"
-          aspectRatio={1}
-          onClick={() => handleVariationClick(el)}
-        />
-      </Container>
-    </Root>
+      <Image
+        src={"./texture/productThumbnail/vitra_eames.png"}
+        objectFit="cover"
+        aspectRatio={1}
+        onClick={() => console.log("Clicked")}
+      />
+    </Container>
   );
 };
