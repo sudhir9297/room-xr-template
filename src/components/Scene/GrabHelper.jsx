@@ -6,6 +6,9 @@ import { Vector3 } from "three";
 // Create vectors outside component to avoid recreating them
 const tempVector = new Vector3();
 const grabbedPosition = new Vector3();
+const offset = new Vector3();
+const targetPosition = new Vector3();
+const currentPosition = new Vector3();
 
 export const DraggableObject = forwardRef(
   (
@@ -14,9 +17,9 @@ export const DraggableObject = forwardRef(
       onDragStart,
       onDragEnd,
       onDrag,
-
-      dragConstraints, // { minX, maxX, minY, maxY, minZ, maxZ }
-      rigidBodyRef, // Reference to the rigid body
+      dragConstraints,
+      rigidBodyRef,
+      smoothness = 0.15, // Lower = smoother, higher = more responsive
       ...props
     },
     ref
@@ -25,7 +28,6 @@ export const DraggableObject = forwardRef(
     const [isDragging, setIsDragging] = useState(false);
     const dragStartPosition = useRef(new Vector3());
 
-    // Combine refs
     const combinedRef = useCombinedRefs(ref, objectRef);
 
     const constrainPosition = useCallback(
@@ -58,9 +60,17 @@ export const DraggableObject = forwardRef(
         setIsDragging(true);
         e.target.setPointerCapture(e.pointerId);
 
+        // Calculate and store the offset between click point and object position
+        tempVector.copy(e.point);
+        objectRef.current.parent?.worldToLocal(tempVector);
+        offset.copy(objectRef.current.position).sub(tempVector);
+
         // Store initial position
         dragStartPosition.current.copy(objectRef.current.position);
         grabbedPosition.copy(e.point);
+
+        // Initialize target position
+        targetPosition.copy(objectRef.current.position);
 
         onDragStart?.({
           point: e.point,
@@ -92,24 +102,14 @@ export const DraggableObject = forwardRef(
       (e) => {
         if (!isDragging || !objectRef.current) return;
 
-        // Get world position
+        // Update target position
         tempVector.copy(e.point);
         objectRef.current.parent?.worldToLocal(tempVector);
+        tempVector.add(offset);
 
-        // Apply constraints
-        const newPosition = constrainPosition(tempVector);
-        objectRef.current.position.copy(newPosition);
-
-        // Handle look at target
-        if (rigidBodyRef.current) {
-          const rigidBodyPosition = rigidBodyRef.current.translation();
-
-          objectRef.current.lookAt(
-            rigidBodyPosition.x,
-            rigidBodyPosition.y + 1,
-            rigidBodyPosition.z
-          );
-        }
+        // Apply constraints to target
+        constrainPosition(tempVector);
+        targetPosition.copy(tempVector);
 
         onDrag?.({
           point: e.point,
@@ -122,7 +122,21 @@ export const DraggableObject = forwardRef(
     );
 
     useFrame(() => {
-      if (isDragging && objectRef.current) {
+      if (!objectRef.current) return;
+
+      // Smooth interpolation of position
+      currentPosition.copy(objectRef.current.position);
+      currentPosition.lerp(targetPosition, smoothness);
+      objectRef.current.position.copy(currentPosition);
+
+      // Handle look at target after position update
+      if (isDragging && rigidBodyRef?.current) {
+        const rigidBodyPosition = rigidBodyRef.current.translation();
+        objectRef.current.lookAt(
+          rigidBodyPosition.x,
+          rigidBodyPosition.y + 1,
+          rigidBodyPosition.z
+        );
       }
     });
 
@@ -140,7 +154,6 @@ export const DraggableObject = forwardRef(
   }
 );
 
-// Utility function to combine refs
 function useCombinedRefs(...refs) {
   return useCallback(
     (element) => {

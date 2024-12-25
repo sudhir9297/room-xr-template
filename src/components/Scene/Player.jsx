@@ -14,11 +14,11 @@ export const Player = () => {
   const uiRef = useRef(null);
   const rigidBodyRef = useRef(null);
   const dragGroupRef = useRef(null);
-
   const capsuleRef = useRef(null);
 
   const isDragging = useRef(false);
   const lastPosition = useRef(new Vector3());
+  const pointOffset = useRef(new Vector3());
 
   const orbitAngle = useRef(0);
   const ORBIT_RADIUS = 1;
@@ -30,24 +30,13 @@ export const Player = () => {
   }, []);
 
   const resetPlayerPosition = () => {
-    // Get initial position from camera matrix
     const initialPosition = new Vector3().setFromMatrixPosition(camera.matrix);
-
-    // If you have a VR player reference
-    // if (capsuleRef.current) {
-    //   camera.position.copy(
-    //     capsuleRef.current.worldToLocal(initialPosition.clone())
-    //   );
-    // }
-
-    // Set new player position
     const newPosition = new Vector3(
       initialPosition.x,
       initialPosition.y,
       initialPosition.z
     );
 
-    // Update player position
     if (rigidBodyRef.current) {
       rigidBodyRef.current.setTranslation(newPosition, true);
     }
@@ -60,23 +49,26 @@ export const Player = () => {
     let direction;
 
     if (pointerPosition) {
+      // Apply the offset to maintain relative position from click point
+      const adjustedPosition = new Vector3(
+        pointerPosition.x - pointOffset.current.x,
+        0,
+        pointerPosition.z - pointOffset.current.z
+      );
+
       if (!isDragging.current) {
-        // Store initial click point
-        lastPosition.current.set(pointerPosition.x, 0, pointerPosition.z);
+        lastPosition.current.set(adjustedPosition.x, 0, adjustedPosition.z);
         isDragging.current = true;
       }
 
-      // Calculate angle from initial click point
-      const dx = pointerPosition.x - rigidBodyPosition.x;
-      const dz = pointerPosition.z - rigidBodyPosition.z;
+      const dx = adjustedPosition.x - rigidBodyPosition.x;
+      const dz = adjustedPosition.z - rigidBodyPosition.z;
       const targetAngle = Math.atan2(dz, dx);
 
-      // Smooth angle transition
       const angleDiff = targetAngle - orbitAngle.current;
-      orbitAngle.current += angleDiff * 0.1; // Adjust smoothing factor as needed
+      orbitAngle.current += angleDiff * 0.1;
     }
 
-    // Calculate orbital position
     direction = new Vector3(
       Math.cos(orbitAngle.current),
       0,
@@ -90,7 +82,7 @@ export const Player = () => {
       rigidBodyPosition.y,
       rigidBodyPosition.z + direction.z
     );
-    // Update position with smoothing
+
     lastPosition.current.lerp(targetPosition, 0.1);
     dragGroupRef.current.position.copy(lastPosition.current);
     dragGroupRef.current.lookAt(
@@ -126,17 +118,28 @@ export const Player = () => {
 
   const onPointerDown = (e) => {
     isDragging.current = true;
+    // Calculate and store the offset between pointer position and dragGroup position
+    if (dragGroupRef.current) {
+      pointOffset.current.set(
+        e.point.x - dragGroupRef.current.position.x,
+        0,
+        e.point.z - dragGroupRef.current.position.z
+      );
+    }
     e.stopPropagation();
   };
+
   const onPointerMove = (e) => {
     if (isDragging.current && rigidBodyRef.current && dragGroupRef.current) {
       updateCubePosition(e.point);
     }
   };
+
   const onPointerUp = (e) => {
     isDragging.current = false;
   };
 
+  // Rest of the component remains the same...
   return (
     <>
       <RigidBody
@@ -150,7 +153,6 @@ export const Player = () => {
         <CapsuleCollider args={[0.6, 0.2]} />
         <XROrigin ref={capsuleRef} position={[0, 0, 0]} />
       </RigidBody>
-      {/* <Cursor /> */}
 
       <group ref={dragGroupRef}>
         <Root
@@ -180,8 +182,6 @@ export const Player = () => {
               justifyContent="center"
               backgroundColor="#f2f2f2"
               name="UI4"
-              // onPointerEnter={() => dragGroupRef.current.scale.setScalar(1.2)}
-              // onPointerLeave={() => dragGroupRef.current.scale.setScalar(1)}
             ></Container>
           </Container>
         </Root>
@@ -198,7 +198,6 @@ export const Player = () => {
         >
           <Root
             positionType="relative"
-            // anchorY="top"
             pixelSize={0.002}
             sizeX={0.5}
             sizeY={0.5}
