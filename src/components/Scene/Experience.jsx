@@ -22,14 +22,14 @@ const Experience = () => {
 
   return (
     <Physics gravity={[0, -2, 0]} timeStep="vary" debug={physics}>
-      {/* <RigidObjects /> */}
-      {/* <Floor /> */}
+      <RigidObjects />
+      <Floor />
       {/* {isSelected ? <FloatingUI /> : null} */}
-      <Slope />
+      {/* <Slope /> */}
 
-      <IfInSessionMode allow={"immersive-vr"}>
-        <Player />
-      </IfInSessionMode>
+      {/* <IfInSessionMode allow={"immersive-vr"}> */}
+      <Player />
+      {/* </IfInSessionMode> */}
       {/* <SolarSystem /> */}
       {/* <UiTest /> */}
     </Physics>

@@ -1,5 +1,5 @@
 import { useFrame } from "@react-three/fiber";
-import { Container, Root } from "@react-three/uikit";
+import { Container, Content, Root } from "@react-three/uikit";
 import { forwardRef, useCallback, useRef, useState } from "react";
 import { Vector3 } from "three";
 
@@ -54,6 +54,8 @@ export const DraggableObject = forwardRef(
 
     const onPointerDown = useCallback(
       (e) => {
+        console.log(e.target.name);
+
         if (isDragging) return;
 
         e.stopPropagation();
@@ -141,14 +143,40 @@ export const DraggableObject = forwardRef(
     });
 
     return (
-      <group
-        ref={combinedRef}
-        {...props}
-        onPointerDown={onPointerDown}
-        onPointerUp={onPointerUp}
-        onPointerMove={onPointerMove}
-      >
-        {children}
+      <group ref={combinedRef} {...props}>
+        <Root
+          positionType="relative"
+          pixelSize={0.002}
+          sizeX={0.5}
+          sizeY={0.5}
+          anchorY="bottom"
+          justifyContent="center"
+          alignItems="center"
+        >
+          <Content
+            positionType="absolute"
+            width="100%"
+            height="100%"
+            backgroundColor={0xffffff}
+            borderRadius={20}
+            onPointerDown={onPointerDown}
+            onPointerUp={onPointerUp}
+            onPointerMove={onPointerMove}
+            name="dragContainer"
+          />
+          <Container
+            width="80%"
+            height="80%"
+            padding={20}
+            backgroundColor="green"
+            justifyContent="center"
+            alignItems="center"
+            borderWidth={1}
+            name="content"
+          >
+            {children}
+          </Container>
+        </Root>
       </group>
     );
   }

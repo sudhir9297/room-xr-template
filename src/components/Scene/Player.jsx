@@ -1,12 +1,13 @@
 import { useProgress } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
 import { CapsuleCollider, RigidBody } from "@react-three/rapier";
-import { Container, Image, Root } from "@react-three/uikit";
+import { Container, Content, Image, Root } from "@react-three/uikit";
 import { useXRControllerLocomotion, XROrigin } from "@react-three/xr";
 import { useEffect, useRef } from "react";
 import { Quaternion, Vector3 } from "three";
-import { DraggableObject, useDragConstraint } from "./GrabHelper";
-import { Scale } from "@react-three/uikit-lucide";
+import { DraggableObject } from "./GrabHelper";
+import { RotateCcw, GripVertical, Sun } from "@react-three/uikit-lucide";
+import { Separator } from "../default/separator";
 
 export const Player = () => {
   const { progress } = useProgress();
@@ -155,37 +156,6 @@ export const Player = () => {
       </RigidBody>
 
       <group ref={dragGroupRef}>
-        <Root
-          onPointerDown={onPointerDown}
-          onPointerMove={onPointerMove}
-          onPointerUp={onPointerUp}
-          onPointerOut={onPointerUp}
-          positionType="relative"
-          pixelSize={0.002}
-          sizeX={0.4}
-          sizeY={0.1}
-          name="UI2"
-        >
-          <Container
-            width="100%"
-            height="100%"
-            justifyContent="center"
-            alignItems="center"
-            backgroundColor="black"
-            borderRadius={2.5}
-            name="UI3"
-          >
-            <Container
-              width="60%"
-              height="20%"
-              borderRadius={12}
-              justifyContent="center"
-              backgroundColor="#f2f2f2"
-              name="UI4"
-            ></Container>
-          </Container>
-        </Root>
-
         <DraggableObject
           dragConstraints={{
             minY: 0,
@@ -193,36 +163,83 @@ export const Player = () => {
             minX: -5,
             maxX: 5,
           }}
-          lookAtTarget={{ x: 0, y: 1.5, z: 0 }}
           rigidBodyRef={rigidBodyRef}
         >
-          <Root
-            positionType="relative"
-            pixelSize={0.002}
-            sizeX={0.5}
-            sizeY={0.5}
+          <UI />
+        </DraggableObject>
+        <Root
+          positionType="relative"
+          pixelSize={0.002}
+          sizeX={0.5}
+          sizeY={0.1}
+          anchorY="top"
+          name="dragGrab"
+          backgroundColor={0xff0000}
+          padding={12}
+        >
+          <Container
+            flexDirection="row"
             justifyContent="center"
             alignItems="center"
-            backgroundColor="black"
-            borderRadius={2.5}
-            name="UI5"
+            backgroundColor={0xffffff}
+            paddingY="2"
+            backgroundOpacity={0.8}
+            borderRadius={12}
+            paddingX={2}
+            onPointerDown={onPointerDown}
+            onPointerMove={onPointerMove}
+            onPointerUp={onPointerUp}
+            onPointerOut={onPointerUp}
           >
             <Container
-              width="60%"
-              height="60%"
-              borderRadius={12}
+              width="20%"
+              height="100%"
               justifyContent="center"
               alignItems="center"
-              backgroundColor="green"
-              name="UI6"
-              padding={4}
-              onPointerEnter={(e) => e.currentObject.scale.setScalar(1.2)}
-              onPointerLeave={() => dragGroupRef.current.scale.setScalar(1)}
             >
-              <UI />
+              <Sun
+                width="12"
+                height="12"
+                hover={{
+                  width: "14",
+                  height: "14",
+                }}
+              />
             </Container>
-          </Root>
-        </DraggableObject>
+            <Separator
+              backgroundColor="black"
+              backgroundOpacity={0.6}
+              orientation="vertical"
+              height="100%"
+            />
+            <Container width="100%" justifyContent="center" alignItems="center">
+              <GripVertical
+                width="12"
+                height="12"
+                hover={{
+                  width: "14",
+                  height: "14",
+                }}
+              />
+            </Container>
+            <Separator
+              backgroundColor="black"
+              backgroundOpacity={0.6}
+              orientation="vertical"
+              height="100%"
+            />
+            <Container width="20%" justifyContent="center" alignItems="center">
+              <RotateCcw
+                width="12"
+                height="12"
+                hover={{
+                  width: "14",
+                  height: "14",
+                }}
+              />
+            </Container>
+          </Container>
+        </Root>
       </group>
     </>
   );
@@ -231,8 +248,8 @@ export const Player = () => {
 const UI = () => {
   return (
     <Container
-      width="50%"
-      height="50%"
+      width="60%"
+      height="60%"
       justifyContent="center"
       backgroundColor="#f2f2f2"
       borderRadius={2.5}
