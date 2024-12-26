@@ -7,14 +7,14 @@ import Slope from "./Slope";
 import { Player } from "./Player";
 import FloatingUI from "../UI";
 import { useModelStore } from "@/Store";
-import SolarSystem from "./Test";
+
 import UiTest from "../UI/uiTest";
 import { IfInSessionMode, ShowIfInSessionMode } from "@react-three/xr";
 import { Cursor } from "./GrabHelper";
 
 const Experience = () => {
   const { physics } = useControls("World Settings", {
-    physics: true,
+    physics: false,
   });
 
   const { selectedObject } = useModelStore();
@@ -22,15 +22,15 @@ const Experience = () => {
 
   return (
     <Physics gravity={[0, -2, 0]} timeStep="vary" debug={physics}>
-      <RigidObjects />
-      <Floor />
+      {/* <RigidObjects /> */}
+      {/* <Floor /> */}
       {/* {isSelected ? <FloatingUI /> : null} */}
-      {/* <Slope /> */}
+      <Slope />
 
-      {/* <IfInSessionMode allow={"immersive-vr"}> */}
-      <Player />
-      {/* </IfInSessionMode> */}
-      {/* <SolarSystem /> */}
+      <IfInSessionMode allow={"immersive-vr"}>
+        <Player />
+      </IfInSessionMode>
+
       {/* <UiTest /> */}
     </Physics>
   );
