@@ -259,8 +259,7 @@ export const DraggableObject = forwardRef(
 );
 
 const ProductDetail = () => {
-  const { selectedObject, setCurrentVariation, removeSelectedObject } =
-    useModelStore();
+  const { selectedObject, setCurrentVariation } = useModelStore();
   const { thumbnail, name, desc, variation } = selectedObject;
 
   return (
@@ -295,8 +294,9 @@ const ProductDetail = () => {
         </Text>
 
         <Container width={"100%"} height={40} gap="3" marginTop={4}>
-          {variation?.map((el) => (
+          {variation?.map((el, idx) => (
             <Image
+              key={idx}
               borderWidth={0.2}
               borderRadius={2}
               src={el.thumbnail}

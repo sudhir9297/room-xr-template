@@ -15,13 +15,15 @@ export const Player = () => {
   const rigidBodyRef = useRef(null);
   const dragGroupRef = useRef(null);
   const capsuleRef = useRef(null);
-
-  const isDragging = useRef(false);
-
+  const orbitAngle = useRef(0);
   const OFFSET = { x: 0, y: 0.8, z: -0.9 };
+  const lastPosition = useRef(new Vector3());
 
   const { selectedObject } = useModelStore();
   const isSelected = Object.keys(selectedObject).length > 0;
+
+  const prevSelectedObjectRef = useRef();
+  const targetPositionRef = useRef(new Vector3());
 
   useEffect(() => {
     if (progress === 100) {
@@ -42,20 +44,55 @@ export const Player = () => {
       rigidBodyRef.current.setTranslation(cameraPosition, true);
     }
 
-    updateCubePosition();
+    updateGroupForUi();
   };
 
-  const updateCubePosition = () => {
+  useEffect(() => {
+    if (!rigidBodyRef.current || !dragGroupRef.current) return;
+
+    const prevSelected = prevSelectedObjectRef.current;
+    const currentSelected = selectedObject;
+
+    if (prevSelected !== currentSelected) {
+      const cameraDirection = new Vector3(0, 0, -1).applyQuaternion(
+        camera.quaternion
+      );
+      orbitAngle.current = Math.atan2(cameraDirection.z, cameraDirection.x);
+    }
+
+    prevSelectedObjectRef.current = selectedObject;
+  }, [selectedObject]);
+
+  const updateGroupForUi = () => {
     if (!rigidBodyRef.current || !dragGroupRef.current) return;
 
     const rigidBodyPosition = rigidBodyRef.current.translation();
 
-    // Set drag group position to rigid body position plus offset
-    dragGroupRef.current.position.set(
-      rigidBodyPosition.x + OFFSET.x,
-      rigidBodyPosition.y + OFFSET.y,
-      rigidBodyPosition.z + OFFSET.z
-    );
+    if (Object.keys(selectedObject).length > 0) {
+      const direction = new Vector3(
+        Math.cos(orbitAngle.current),
+        0,
+        Math.sin(orbitAngle.current)
+      );
+      direction.multiplyScalar(Math.abs(OFFSET.z));
+
+      targetPositionRef.current.set(
+        rigidBodyPosition.x + direction.x,
+        rigidBodyPosition.y + OFFSET.y,
+        rigidBodyPosition.z + direction.z
+      );
+    } else {
+      // Use regular offset when no object is selected
+      targetPositionRef.current.set(
+        rigidBodyPosition.x + OFFSET.x,
+        rigidBodyPosition.y + OFFSET.y,
+        rigidBodyPosition.z + OFFSET.z
+      );
+    }
+
+    lastPosition.current.lerp(targetPositionRef.current, 0.1);
+    dragGroupRef.current.position.copy(lastPosition.current);
+
     dragGroupRef.current.lookAt(
       rigidBodyPosition.x,
       rigidBodyPosition.y + 0.8,
@@ -64,9 +101,7 @@ export const Player = () => {
   };
 
   useFrame((state, delta) => {
-    if (!isDragging.current) {
-      updateCubePosition();
-    }
+    updateGroupForUi();
   });
 
   const userMove = (inputVector) => {
@@ -98,10 +133,10 @@ export const Player = () => {
       </RigidBody>
 
       <group ref={dragGroupRef}>
-        {/* <mesh>
-          <boxGeometry args={[0.2, 0.2, 0.2]} />
+        <mesh>
+          <boxGeometry args={[0.05, 0.05, 0.05]} />
           <meshBasicMaterial color="red" />
-        </mesh> */}
+        </mesh>
         {isSelected ? (
           <DraggableObject
             dragConstraints={{
@@ -111,7 +146,7 @@ export const Player = () => {
               maxX: 5,
             }}
             rigidBodyRef={rigidBodyRef}
-          ></DraggableObject>
+          />
         ) : null}
       </group>
     </>
