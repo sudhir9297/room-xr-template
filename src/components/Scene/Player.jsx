@@ -5,7 +5,7 @@ import { CapsuleCollider, RigidBody } from "@react-three/rapier";
 import { useXRControllerLocomotion, XROrigin } from "@react-three/xr";
 import { useEffect, useRef } from "react";
 import { Euler, Quaternion, Vector3 } from "three";
-import { DraggableObject } from "./GrabHelper";
+import { DraggableObject } from "../UI/GrabHelper";
 import { useModelStore } from "@/Store";
 
 export const Player = () => {
@@ -133,10 +133,10 @@ export const Player = () => {
       </RigidBody>
 
       <group ref={dragGroupRef}>
-        <mesh>
+        {/* <mesh>
           <boxGeometry args={[0.05, 0.05, 0.05]} />
           <meshBasicMaterial color="red" />
-        </mesh>
+        </mesh> */}
         {isSelected ? (
           <DraggableObject
             dragConstraints={{

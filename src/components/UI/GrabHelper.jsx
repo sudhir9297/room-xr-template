@@ -22,7 +22,7 @@ export const DraggableObject = forwardRef(
       onDrag,
       dragConstraints,
       rigidBodyRef,
-      smoothness = 0.15, // Lower = smoother, higher = more responsive
+      smoothness = 0.15,
       ...props
     },
     ref
@@ -168,7 +168,6 @@ export const DraggableObject = forwardRef(
             backgroundColor={0xffffff}
             backgroundOpacity={0.8}
           >
-            {children}
             <ProductDetail />
           </Container>
 

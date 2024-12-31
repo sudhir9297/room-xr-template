@@ -1,9 +1,7 @@
 import React, { useRef } from "react";
-import { productVariation } from "@/constant/data";
 import { useFrame, useThree } from "@react-three/fiber";
 import { Quaternion, Vector3 } from "three";
 import { Container, Image, Root, Text } from "@react-three/uikit";
-import { Package } from "@react-three/uikit-lucide";
 import { useModelStore } from "@/Store/index.js";
 
 const FloatingUI = ({
