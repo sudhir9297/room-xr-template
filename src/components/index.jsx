@@ -25,7 +25,7 @@ const HomePage = () => {
       <Canvas
         dpr={[1, 2]}
         shadows
-        camera={{ position: [0, 0, 2], fov: 45 }}
+        camera={{ position: [12, 12, 2], fov: 45 }}
         gl={{ localClippingEnabled: true }}
       >
         <color attach="background" args={["#303030"]} />
@@ -33,10 +33,10 @@ const HomePage = () => {
           <Perf position="top-left" />
           <Lights />
           {/* <OrbitControls /> */}
-          <UiTest />
-          {/* <XR store={store}>
+          {/* <UiTest /> */}
+          <XR store={store}>
             <Experience />
-          </XR> */}
+          </XR>
         </Suspense>
       </Canvas>
     </div>

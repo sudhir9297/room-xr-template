@@ -54,7 +54,7 @@ export const ProductDetail = () => {
           borderTopLeftRadius={uiConfig.borderRadius * 3}
           borderBottomLeftRadius={uiConfig.borderRadius * 3}
           width="60%"
-          backgroundColor="#f2f2f2"
+          backgroundColor="#FFFFFF"
           padding={10}
           flexDirection="column"
         >
@@ -83,7 +83,7 @@ export const ProductDetail = () => {
                   width={60}
                   height={60}
                   aspectRatio={1}
-                  backgroundColor="green"
+                  backgroundColor="#4CAF50"
                   backgroundOpacity="0.5"
                   borderRadius={uiConfig.borderRadius * 2}
                 >
@@ -102,6 +102,8 @@ export const ProductDetail = () => {
             height="40%"
             flexDirection="column"
             overflow="scroll"
+            scrollbarColor="black"
+            scrollbarWidth={2}
           >
             <Accordion paddingX="12">
               <AccordionItem value="item-1">
@@ -117,7 +119,7 @@ export const ProductDetail = () => {
                   scrollbarColor="black"
                   scrollbarWidth={2}
                 >
-                  <Text fontSize={13}>
+                  <Text fontSize={10}>
                     You can't miss Billie when you step into a room. Its chubby
                     shape and wide armrests are completely on trend. The sofa is
                     justas stylish from the back as it is from the front, which
@@ -140,7 +142,7 @@ export const ProductDetail = () => {
                   scrollbarColor="black"
                   scrollbarWidth={2}
                 >
-                  <Text fontSize={13}>300cm x 400cm x 200 cm</Text>
+                  <Text fontSize={10}>300cm x 400cm x 200 cm</Text>
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
@@ -150,7 +152,7 @@ export const ProductDetail = () => {
           borderTopRightRadius={uiConfig.borderRadius * 3}
           borderBottomRightRadius={uiConfig.borderRadius * 3}
           width="40%"
-          backgroundColor="#f2f2f2"
+          backgroundColor="#FFFFFF"
           padding={10}
         >
           <Container
@@ -264,7 +266,7 @@ export const ProductDetail = () => {
                     width={60}
                     height={60}
                     aspectRatio={1}
-                    backgroundColor="green"
+                    backgroundColor="#4CAF50"
                     backgroundOpacity="0.5"
                     borderRadius={uiConfig.borderRadius * 2}
                   >
@@ -327,7 +329,7 @@ export const ProductDetail = () => {
                 <Text
                   fontSize={12}
                   backgroundColor={uiConfig.success.primary}
-                  paddingX={uiConfig.padding * 16}
+                  paddingX={uiConfig.padding * 6}
                   paddingY={uiConfig.padding * 4.5}
                   fontWeight={"bold"}
                   borderRadius={uiConfig.borderRadius * 3}

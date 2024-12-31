@@ -25,11 +25,11 @@ const Experience = () => {
       {/* <RigidObjects /> */}
       {/* <Floor /> */}
       {/* {isSelected ? <FloatingUI /> : null} */}
-      {/* <Slope /> */}
+      <Slope />
 
-      {/* <IfInSessionMode allow={"immersive-vr"}>
+      <IfInSessionMode allow={"immersive-vr"}>
         <Player />
-      </IfInSessionMode> */}
+      </IfInSessionMode>
     </Physics>
   );
 };

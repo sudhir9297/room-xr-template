@@ -5,6 +5,8 @@ import { forwardRef, useCallback, useRef, useState } from "react";
 import { Vector3 } from "three";
 import { Separator } from "../default/separator";
 import { useModelStore } from "@/Store";
+import { ProductDetail } from "./ProductDetailUI";
+import { colors } from "@react-three/uikit-default";
 
 // Create vectors outside component to avoid recreating them
 const tempVector = new Vector3();
@@ -59,8 +61,6 @@ export const DraggableObject = forwardRef(
 
     const onPointerDown = useCallback(
       (e) => {
-        console.log(e.target.name);
-
         if (isDragging) return;
 
         e.stopPropagation();
@@ -137,40 +137,30 @@ export const DraggableObject = forwardRef(
       objectRef.current.position.copy(currentPosition);
 
       // Handle look at target after position update
-      if (isDragging && rigidBodyRef?.current) {
-        const rigidBodyPosition = rigidBodyRef.current.translation();
-        objectRef.current.lookAt(
-          rigidBodyPosition.x,
-          rigidBodyPosition.y + 1,
-          rigidBodyPosition.z
-        );
-      }
+
+      const rigidBodyPosition = rigidBodyRef.current.translation();
+      objectRef.current.lookAt(
+        rigidBodyPosition.x,
+        rigidBodyPosition.y + 0.8,
+        rigidBodyPosition.z
+      );
     });
+
+    const resetUI = () => {
+      targetPosition.copy(new Vector3(0, 0, 0));
+    };
 
     return (
       <group ref={combinedRef} {...props}>
         <Root
           positionType="relative"
-          pixelSize={0.002}
-          sizeX={0.5}
-          sizeY={0.5}
           anchorY="bottom"
+          pixelSize={0.002}
+          sizeX={1.4}
+          sizeY={0.9}
           flexDirection="column"
-          gap="2"
         >
-          <Container
-            width="100%"
-            height="85%"
-            justifyContent="center"
-            alignItems="center"
-            name="content"
-            borderRadius={12}
-            backgroundColor={0xffffff}
-            backgroundOpacity={0.8}
-          >
-            <ProductDetail />
-          </Container>
-
+          <ProductDetail />
           <Container
             height="15%"
             // backgroundColor="red"
@@ -184,17 +174,24 @@ export const DraggableObject = forwardRef(
               flexDirection="row"
               justifyContent="center"
               alignItems="center"
-              backgroundColor={0xffffff}
               paddingY="2"
-              backgroundOpacity={0.8}
               borderRadius={12}
               paddingX={2}
             >
               <Container
-                width="20%"
+                width="10%"
                 height="100%"
                 justifyContent="center"
                 alignItems="center"
+                onClick={resetUI}
+                borderTopLeftRadius={12}
+                borderBottomLeftRadius={12}
+                backgroundColor={0xffffff}
+                backgroundOpacity={0.5}
+                hover={{
+                  backgroundOpacity: 1,
+                  backgroundColor: "#FFC107",
+                }}
               >
                 <RotateCcw
                   width="10"
@@ -202,6 +199,7 @@ export const DraggableObject = forwardRef(
                   hover={{
                     width: "12",
                     height: "12",
+                    color: "white",
                   }}
                 />
               </Container>
@@ -215,6 +213,12 @@ export const DraggableObject = forwardRef(
                 width="100%"
                 justifyContent="center"
                 alignItems="center"
+                backgroundColor={0xffffff}
+                backgroundOpacity={0.5}
+                height="100%"
+                hover={{
+                  backgroundOpacity: 1,
+                }}
                 onPointerDown={onPointerDown}
                 onPointerUp={onPointerUp}
                 onPointerMove={onPointerMove}
@@ -235,10 +239,19 @@ export const DraggableObject = forwardRef(
                 height="100%"
               />
               <Container
-                width="20%"
+                width="10%"
+                height="100%"
                 justifyContent="center"
                 alignItems="center"
-                onClick={() => removeSelectedObject()}
+                borderTopRightRadius={12}
+                borderBottomRightRadius={12}
+                backgroundColor={0xffffff}
+                backgroundOpacity={0.5}
+                hover={{
+                  backgroundOpacity: 1,
+                  backgroundColor: "#FF4C4C",
+                }}
+                onClick={removeSelectedObject}
               >
                 <X
                   width="10"
@@ -246,6 +259,7 @@ export const DraggableObject = forwardRef(
                   hover={{
                     width: "12",
                     height: "12",
+                    color: "white",
                   }}
                 />
               </Container>
@@ -257,58 +271,58 @@ export const DraggableObject = forwardRef(
   }
 );
 
-const ProductDetail = () => {
-  const { selectedObject, setCurrentVariation } = useModelStore();
-  const { thumbnail, name, desc, variation } = selectedObject;
+// const ProductDetail = () => {
+//   const { selectedObject, setCurrentVariation } = useModelStore();
+//   const { thumbnail, name, desc, variation } = selectedObject;
 
-  return (
-    <Container flexDirection="column" padding={12}>
-      <Container
-        height="100%"
-        flexDirection="column"
-        gap={8}
-        overflow="scroll"
-        scrollbarWidth={0}
-      >
-        <Container
-          width="100%"
-          height="100%"
-          justifyContent="center"
-          backgroundColor="#5d855b"
-          borderRadius={2.5}
-        >
-          <Image
-            src={thumbnail}
-            objectFit="cover"
-            aspectRatio={1}
-            onClick={() => handleVariationClick(el)}
-          />
-        </Container>
+//   return (
+//     <Container flexDirection="column" padding={12}>
+//       <Container
+//         height="100%"
+//         flexDirection="column"
+//         gap={8}
+//         overflow="scroll"
+//         scrollbarWidth={0}
+//       >
+//         <Container
+//           width="100%"
+//           height="100%"
+//           justifyContent="center"
+//           backgroundColor="#5d855b"
+//           borderRadius={2.5}
+//         >
+//           <Image
+//             src={thumbnail}
+//             objectFit="cover"
+//             aspectRatio={1}
+//             onClick={() => handleVariationClick(el)}
+//           />
+//         </Container>
 
-        <Text fontSize={12} color="black" fontWeight={"semi-bold"}>
-          {name}
-        </Text>
-        <Text fontSize={8} color="#535665">
-          {desc}
-        </Text>
+//         <Text fontSize={12} color="black" fontWeight={"semi-bold"}>
+//           {name}
+//         </Text>
+//         <Text fontSize={8} color="#535665">
+//           {desc}
+//         </Text>
 
-        <Container width={"100%"} height={40} gap="3" marginTop={4}>
-          {variation?.map((el, idx) => (
-            <Image
-              key={idx}
-              borderWidth={0.2}
-              borderRadius={2}
-              src={el.thumbnail}
-              objectFit="cover"
-              aspectRatio={1}
-              onClick={() => setCurrentVariation(el)}
-            />
-          ))}
-        </Container>
-      </Container>
-    </Container>
-  );
-};
+//         <Container width={"100%"} height={40} gap="3" marginTop={4}>
+//           {variation?.map((el, idx) => (
+//             <Image
+//               key={idx}
+//               borderWidth={0.2}
+//               borderRadius={2}
+//               src={el.thumbnail}
+//               objectFit="cover"
+//               aspectRatio={1}
+//               onClick={() => setCurrentVariation(el)}
+//             />
+//           ))}
+//         </Container>
+//       </Container>
+//     </Container>
+//   );
+// };
 
 function useCombinedRefs(...refs) {
   return useCallback(
