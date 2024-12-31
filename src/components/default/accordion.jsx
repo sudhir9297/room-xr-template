@@ -5,7 +5,7 @@ import { ChevronDown } from "@react-three/uikit-lucide";
 const AccordionContext = createContext(null);
 
 export function Accordion({ children, ...props }) {
-  const stateHandler = (useState < string) | (undefined > undefined);
+  const stateHandler = useState(undefined);
   return (
     <Container flexDirection="column" {...props}>
       <AccordionContext.Provider value={stateHandler}>
@@ -14,7 +14,7 @@ export function Accordion({ children, ...props }) {
     </Container>
   );
 }
-const AccordionItemContext = createContext < string > "";
+const AccordionItemContext = createContext("");
 
 export const AccordionItem = forwardRef(({ children, ...props }, ref) => {
   const [value, setValue] = useContext(AccordionContext);

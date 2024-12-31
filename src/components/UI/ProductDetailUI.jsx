@@ -4,7 +4,12 @@ import React, { useRef } from "react";
 
 import { productData } from "@/constant/data";
 import { Check, Minus, Plus } from "@react-three/uikit-lucide";
-import { Button } from "../default/button";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "../default/accordion";
 
 const uiConfig = {
   borderRadius: 2,
@@ -50,7 +55,97 @@ export const ProductDetail = () => {
           borderBottomLeftRadius={uiConfig.borderRadius * 3}
           width="60%"
           backgroundColor="#f2f2f2"
-        ></Container>
+          padding={10}
+          flexDirection="column"
+        >
+          <Container height="60%">
+            <Container
+              borderWidth="1"
+              justifyContent="center"
+              alignItems="center"
+              flexGrow="1"
+              height="100%"
+            >
+              <Text>3D Content</Text>
+            </Container>
+
+            <Container
+              height="100%"
+              gap={4}
+              flexDirection="column"
+              overflow={"scroll"}
+              scrollbarColor="black"
+              scrollbarWidth={2}
+              padding="4"
+            >
+              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((variation, idx) => (
+                <Container
+                  width={60}
+                  height={60}
+                  aspectRatio={1}
+                  backgroundColor="green"
+                  backgroundOpacity="0.5"
+                  borderRadius={uiConfig.borderRadius * 2}
+                >
+                  <Image
+                    key={idx}
+                    src={"./texture/productThumbnail/vitra_eames.png"}
+                    objectFit="cover"
+                  />
+                </Container>
+              ))}
+            </Container>
+          </Container>
+
+          <Container
+            width="100%"
+            height="40%"
+            flexDirection="column"
+            overflow="scroll"
+          >
+            <Accordion paddingX="12">
+              <AccordionItem value="item-1">
+                <AccordionTrigger>
+                  <Text fontSize={14} color="black">
+                    Product Description
+                  </Text>
+                </AccordionTrigger>
+                <AccordionContent
+                  flexWrap="wrap"
+                  overflow="scroll"
+                  paddingRight="12"
+                  scrollbarColor="black"
+                  scrollbarWidth={2}
+                >
+                  <Text fontSize={13}>
+                    You can't miss Billie when you step into a room. Its chubby
+                    shape and wide armrests are completely on trend. The sofa is
+                    justas stylish from the back as it is from the front, which
+                    means it can easily stand almost anywhere. In addition to
+                    its fantastic appearance, it is very comfortable to sit in
+                    and is therefore an excellent choice as a sofa for evenings
+                    in front of the TV. This variant also comes with a divan for
+                    extra relaxation.
+                  </Text>
+                </AccordionContent>
+              </AccordionItem>
+              <AccordionItem value="item-2">
+                <AccordionTrigger>
+                  <Text fontSize={14}>Dimensions</Text>
+                </AccordionTrigger>
+                <AccordionContent
+                  flexWrap="wrap"
+                  overflow="scroll"
+                  paddingRight="12"
+                  scrollbarColor="black"
+                  scrollbarWidth={2}
+                >
+                  <Text fontSize={13}>300cm x 400cm x 200 cm</Text>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          </Container>
+        </Container>
         <Container
           borderTopRightRadius={uiConfig.borderRadius * 3}
           borderBottomRightRadius={uiConfig.borderRadius * 3}
