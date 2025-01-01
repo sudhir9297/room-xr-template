@@ -3,13 +3,13 @@ import { useEffect, useRef } from "react";
 import { useGLTF } from "@react-three/drei";
 import { usePhysicsObjects } from "@/hooks/usePhysicsHooks";
 import { usePickObject } from "@/hooks/usePickObject";
-import { useFrame, useThree } from "@react-three/fiber";
-import { useRayPointer, useXRInputSourceEvent } from "@react-three/xr";
+import { useThree } from "@react-three/fiber";
+
 import { useModelStore } from "@/Store";
 
 export default function Slope() {
-  const groupRef = useRef();
-  const { selectedObject, currentVariation } = useModelStore();
+  const { selectedObjectName, selectedObjectData, currentTexture } =
+    useModelStore();
 
   const slopePlane = useGLTF("./slope.glb");
   const { addPhysics } = usePhysicsObjects();
@@ -19,41 +19,39 @@ export default function Slope() {
   TextureLoader.setCrossOrigin("*");
 
   useEffect(() => {
-    if (!currentVariation) return;
+    if (!currentTexture) return;
 
     Scene.traverse((obj) => {
-      Object.entries(currentVariation.varData).forEach(([name, data]) => {
-        if (name === obj.name && obj.type === "Mesh") {
-          if (data.map) {
-            const albedoMap = TextureLoader.load(data.map);
-            albedoMap.repeat.set(data.repeatX, data.repeatY);
-            albedoMap.wrapS = THREE.RepeatWrapping;
-            albedoMap.wrapT = THREE.RepeatWrapping;
-            albedoMap.colorSpace = THREE.SRGBColorSpace;
-            obj.material.map = albedoMap;
-          }
-          obj.material.color = new THREE.Color(
-            data.color
-          ).convertSRGBToLinear();
-          obj.material.needsUpdate = true;
+      if (selectedObjectName === obj.name && obj.type === "Mesh") {
+        if (currentTexture.map) {
+          const albedoMap = TextureLoader.load(currentTexture.map);
+          albedoMap.repeat.set(currentTexture.repeatX, currentTexture.repeatY);
+          albedoMap.wrapS = THREE.RepeatWrapping;
+          albedoMap.wrapT = THREE.RepeatWrapping;
+          albedoMap.colorSpace = THREE.SRGBColorSpace;
+          obj.material.map = albedoMap;
         }
-      });
+        obj.material.color = new THREE.Color(
+          currentTexture.color
+        ).convertSRGBToLinear();
+        obj.material.needsUpdate = true;
+      }
     });
 
     return () => {};
-  }, [currentVariation]);
-
-  const ApplyVariation = () => {};
+  }, [currentTexture]);
 
   useEffect(() => {
     slopePlane.scene.traverse((child) => {
       if (child instanceof THREE.Mesh) {
         child.receiveShadow = true;
+        child.side = 2;
 
         const name = child.name?.split("_") || [];
 
         if (name.includes("ignore")) {
           child.pointerEvents = "none";
+        } else {
         }
 
         if (name[0] === "trimesh") {
@@ -69,7 +67,7 @@ export default function Slope() {
   const bind = usePickObject();
 
   return (
-    <group ref={groupRef} {...bind}>
+    <group {...bind}>
       <primitive object={slopePlane.scene} />
     </group>
   );

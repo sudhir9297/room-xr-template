@@ -1,12 +1,10 @@
-import { useFrame } from "@react-three/fiber";
-import { Container, Content, Image, Root, Text } from "@react-three/uikit";
+import { useFrame, useThree } from "@react-three/fiber";
+import { Container, Image, Root, Text } from "@react-three/uikit";
 import { GripVertical, RotateCcw, X } from "@react-three/uikit-lucide";
 import { forwardRef, useCallback, useRef, useState } from "react";
 import { Vector3 } from "three";
 import { Separator } from "../default/separator";
 import { useModelStore } from "@/Store";
-import { ProductDetail } from "./ProductDetailUI";
-import { colors } from "@react-three/uikit-default";
 
 // Create vectors outside component to avoid recreating them
 const tempVector = new Vector3();
@@ -32,8 +30,8 @@ export const DraggableObject = forwardRef(
     const objectRef = useRef(null);
     const [isDragging, setIsDragging] = useState(false);
     const dragStartPosition = useRef(new Vector3());
-
-    const { removeSelectedObject } = useModelStore();
+    const { camera } = useThree();
+    const { clearSelectedObject } = useModelStore();
 
     const combinedRef = useCombinedRefs(ref, objectRef);
 
@@ -141,7 +139,7 @@ export const DraggableObject = forwardRef(
       const rigidBodyPosition = rigidBodyRef.current.translation();
       objectRef.current.lookAt(
         rigidBodyPosition.x,
-        rigidBodyPosition.y + 0.8,
+        camera.position.y + 0.5,
         rigidBodyPosition.z
       );
     });
@@ -156,8 +154,8 @@ export const DraggableObject = forwardRef(
           positionType="relative"
           anchorY="bottom"
           pixelSize={0.002}
-          sizeX={1.4}
-          sizeY={0.9}
+          sizeX={0.5}
+          sizeY={0.5}
           flexDirection="column"
         >
           <ProductDetail />
@@ -169,7 +167,7 @@ export const DraggableObject = forwardRef(
             alignItems="center"
           >
             <Container
-              width="80%"
+              width="90%"
               height="50%"
               flexDirection="row"
               justifyContent="center"
@@ -251,7 +249,7 @@ export const DraggableObject = forwardRef(
                   backgroundOpacity: 1,
                   backgroundColor: "#FF4C4C",
                 }}
-                onClick={removeSelectedObject}
+                onClick={clearSelectedObject}
               >
                 <X
                   width="10"
@@ -271,58 +269,44 @@ export const DraggableObject = forwardRef(
   }
 );
 
-// const ProductDetail = () => {
-//   const { selectedObject, setCurrentVariation } = useModelStore();
-//   const { thumbnail, name, desc, variation } = selectedObject;
+const ProductDetail = () => {
+  const { selectedObjectData, setCurrentTexture } = useModelStore();
 
-//   return (
-//     <Container flexDirection="column" padding={12}>
-//       <Container
-//         height="100%"
-//         flexDirection="column"
-//         gap={8}
-//         overflow="scroll"
-//         scrollbarWidth={0}
-//       >
-//         <Container
-//           width="100%"
-//           height="100%"
-//           justifyContent="center"
-//           backgroundColor="#5d855b"
-//           borderRadius={2.5}
-//         >
-//           <Image
-//             src={thumbnail}
-//             objectFit="cover"
-//             aspectRatio={1}
-//             onClick={() => handleVariationClick(el)}
-//           />
-//         </Container>
-
-//         <Text fontSize={12} color="black" fontWeight={"semi-bold"}>
-//           {name}
-//         </Text>
-//         <Text fontSize={8} color="#535665">
-//           {desc}
-//         </Text>
-
-//         <Container width={"100%"} height={40} gap="3" marginTop={4}>
-//           {variation?.map((el, idx) => (
-//             <Image
-//               key={idx}
-//               borderWidth={0.2}
-//               borderRadius={2}
-//               src={el.thumbnail}
-//               objectFit="cover"
-//               aspectRatio={1}
-//               onClick={() => setCurrentVariation(el)}
-//             />
-//           ))}
-//         </Container>
-//       </Container>
-//     </Container>
-//   );
-// };
+  return (
+    <Container
+      flexDirection="column"
+      padding={12}
+      backgroundColor="#f2f2f2"
+      borderRadius={12}
+    >
+      <Container
+        width="100%"
+        height="100%"
+        justifyContent="flex-start"
+        gap={4}
+        flexWrap="wrap"
+        overflow="scroll"
+        scrollbarWidth={1}
+        scrollbarColor="black"
+      >
+        {selectedObjectData.textures.map((el, i) => (
+          <Container key={i} flexDirection="column" gap={4} marginBottom={5}>
+            <Image
+              width="70"
+              height="70"
+              src={el.map}
+              objectFit="cover"
+              aspectRatio={1}
+              onClick={() => setCurrentTexture(el)}
+              borderRadius={6}
+            />
+            <Text fontSize="8">{el.name}</Text>
+          </Container>
+        ))}
+      </Container>
+    </Container>
+  );
+};
 
 function useCombinedRefs(...refs) {
   return useCallback(

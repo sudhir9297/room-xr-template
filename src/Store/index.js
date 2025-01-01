@@ -3,14 +3,26 @@ import { create } from "zustand";
 export const useModelStore = create((set) => ({
   dynamicObjects: [],
   staticObjects: [],
-  selectedObject: {},
-  currentVariation: null,
 
-  addSelectedObject: (object) => set({ selectedObject: object }),
-  removeSelectedObject: () =>
-    set({ selectedObject: {}, currentVariation: null }),
+  selectedObjectName: null,
+  selectedObjectData: {},
+  currentTexture: null,
 
-  setCurrentVariation: (object) => set({ currentVariation: object }),
+  setSelectedObject: ({ data, name }) =>
+    set({
+      selectedObjectData: data,
+      selectedObjectName: name,
+      currentTexture: null,
+    }),
+
+  clearSelectedObject: () =>
+    set({
+      selectedObjectName: null,
+      currentTexture: null,
+      selectedObjectData: {},
+    }),
+
+  setCurrentTexture: (object) => set({ currentTexture: object }),
 
   addDynamicObject: (dynamicObject) =>
     set((state) => ({

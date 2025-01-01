@@ -1,8 +1,6 @@
-import { Container, Image, Root, Text } from "@react-three/uikit";
-import { useFrame } from "@react-three/fiber";
-import React, { useRef } from "react";
+import { Container, Image, Text } from "@react-three/uikit";
+import React from "react";
 
-import { productData } from "@/constant/data";
 import { Check, Minus, Plus } from "@react-three/uikit-lucide";
 import {
   Accordion,

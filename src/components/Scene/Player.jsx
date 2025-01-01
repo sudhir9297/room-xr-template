@@ -4,14 +4,13 @@ import { CapsuleCollider, RigidBody } from "@react-three/rapier";
 
 import { useXRControllerLocomotion, XROrigin } from "@react-three/xr";
 import { useEffect, useRef } from "react";
-import { Euler, Quaternion, Vector3 } from "three";
+import { Vector3 } from "three";
 import { DraggableObject } from "../UI/GrabHelper";
 import { useModelStore } from "@/Store";
 
 export const Player = () => {
   const { progress } = useProgress();
   const { camera } = useThree();
-  const uiRef = useRef(null);
   const rigidBodyRef = useRef(null);
   const dragGroupRef = useRef(null);
   const capsuleRef = useRef(null);
@@ -19,8 +18,7 @@ export const Player = () => {
   const OFFSET = { x: 0, y: 0.8, z: -0.9 };
   const lastPosition = useRef(new Vector3());
 
-  const { selectedObject } = useModelStore();
-  const isSelected = Object.keys(selectedObject).length > 0;
+  const { selectedObjectName } = useModelStore();
 
   const prevSelectedObjectRef = useRef();
   const targetPositionRef = useRef(new Vector3());
@@ -51,7 +49,7 @@ export const Player = () => {
     if (!rigidBodyRef.current || !dragGroupRef.current) return;
 
     const prevSelected = prevSelectedObjectRef.current;
-    const currentSelected = selectedObject;
+    const currentSelected = selectedObjectName;
 
     if (prevSelected !== currentSelected) {
       const cameraDirection = new Vector3(0, 0, -1).applyQuaternion(
@@ -60,15 +58,15 @@ export const Player = () => {
       orbitAngle.current = Math.atan2(cameraDirection.z, cameraDirection.x);
     }
 
-    prevSelectedObjectRef.current = selectedObject;
-  }, [selectedObject]);
+    prevSelectedObjectRef.current = selectedObjectName;
+  }, [selectedObjectName]);
 
   const updateGroupForUi = () => {
     if (!rigidBodyRef.current || !dragGroupRef.current) return;
 
     const rigidBodyPosition = rigidBodyRef.current.translation();
 
-    if (Object.keys(selectedObject).length > 0) {
+    if (selectedObjectName) {
       const direction = new Vector3(
         Math.cos(orbitAngle.current),
         0,
@@ -137,7 +135,8 @@ export const Player = () => {
           <boxGeometry args={[0.05, 0.05, 0.05]} />
           <meshBasicMaterial color="red" />
         </mesh> */}
-        {isSelected ? (
+
+        {selectedObjectName ? (
           <DraggableObject
             dragConstraints={{
               minY: -1,
