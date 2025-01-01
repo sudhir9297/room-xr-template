@@ -9,6 +9,7 @@ import Experience from "./Scene/Experience";
 import Lights from "./Light";
 import { Leva } from "leva";
 import { ACESFilmicToneMapping } from "three";
+import PostProcessing from "./Postprocessing";
 
 const store = createXRStore();
 
@@ -25,7 +26,7 @@ const HomePage = () => {
       <Canvas
         dpr={[1, 2]}
         shadows
-        camera={{ position: [50, 50, 50], fov: 45 }}
+        camera={{ position: [10, 10, 10], fov: 45 }}
         gl={{
           localClippingEnabled: true,
           antialias: true,
@@ -36,7 +37,8 @@ const HomePage = () => {
         <Suspense fallback={null}>
           <Perf position="top-left" />
           <Lights />
-          {/* <OrbitControls /> */}
+          <OrbitControls />
+          {/* <PostProcessing /> */}
           <XR store={store}>
             <Experience />
           </XR>

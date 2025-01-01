@@ -17,7 +17,7 @@ export default function Lights() {
 
   return (
     <>
-      <SoftShadows size={3} focus={2} samples={12} />
+      <SoftShadows size={2} focus={4} samples={12} />
       <directionalLight
         castShadow
         shadow-bias={-0.001}
@@ -28,7 +28,7 @@ export default function Lights() {
       >
         <orthographicCamera
           attach="shadow-camera"
-          args={[-20, 20, 10, -10, 0.01, 100]}
+          args={[-20, 20, 10, -5, 0.01, 100]}
         />
       </directionalLight>
       <ambientLight intensity={1} />

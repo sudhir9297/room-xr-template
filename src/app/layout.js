@@ -1,8 +1,8 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "Sandbox",
-  description: "An app for testing React three Fiber",
+  title: "Room-xr",
+  description: "Room Configurator in WebXR",
 };
 
 export default function RootLayout({ children }) {

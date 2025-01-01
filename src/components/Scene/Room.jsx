@@ -125,7 +125,8 @@ export function Model(props) {
         scale={0.077}
       />
       <mesh
-        name="carpet_Carpet__0"
+        {...bind}
+        name="carpet"
         castShadow
         receiveShadow
         geometry={nodes.carpet_Carpet__0.geometry}
