@@ -56,6 +56,8 @@ export const usePhysicsObjects = () => {
       // ... other cases (ball, capsule, cylinder) remain the same
       default:
         {
+          console.log(mesh.name);
+
           const vertices = new Float32Array(
             mesh.geometry.attributes.position.array
           );

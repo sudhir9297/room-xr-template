@@ -1,12 +1,12 @@
 export const ProductList = {
-  trimesh_fixed_floor: {
+  floor: {
     id: 1,
     name: "Floor",
     textures: [
       {
         id: "1",
         name: "Wood 1",
-        map: "./texture/wood1.jpg",
+        map: "./texture/wood2.jpg",
         color: "#ffffff",
         metalness: 0.00001,
         roughness: 0.672727,
@@ -30,30 +30,50 @@ export const ProductList = {
         color: "#ffffff",
         metalness: 0.00001,
         roughness: 0.672727,
-        repeatX: 2,
-        repeatY: 2,
+        repeatX: 12,
+        repeatY: 12,
       },
     ],
   },
-  box1: {
+  table: {
     id: 1,
-    name: "Box",
+    name: "Table",
     textures: [
       {
         id: "1",
         name: "Wood 2",
-        map: "./texture/wood2.jpg",
+        map: "./texture/wood1.jpg",
         color: "#ffffff",
         metalness: 0.00001,
         roughness: 0.672727,
         repeatX: 4,
         repeatY: 4,
       },
+      {
+        id: "2",
+        name: "Wood 3",
+        map: "./texture/wood3.jpg",
+        color: "#ffffff",
+        metalness: 0.00001,
+        roughness: 0.672727,
+        repeatX: 8,
+        repeatY: 8,
+      },
+      {
+        id: "3",
+        name: "Wood 4",
+        map: "./texture/wood4.jpg",
+        color: "#ffffff",
+        metalness: 0.00001,
+        roughness: 0.672727,
+        repeatX: 12,
+        repeatY: 12,
+      },
     ],
   },
-  box2: {
+  cabinet: {
     id: 1,
-    name: "Box",
+    name: "Cabinet",
     textures: [
       {
         id: "1",

@@ -121,7 +121,6 @@ export const Player = () => {
       <RigidBody
         colliders={false}
         type="dynamic"
-        position={[0, 2, 0]}
         enabledRotations={[false, false, false]}
         canSleep={false}
         ref={rigidBodyRef}

@@ -8,6 +8,7 @@ import { OrbitControls } from "@react-three/drei";
 import Experience from "./Scene/Experience";
 import Lights from "./Light";
 import { Leva } from "leva";
+import { ACESFilmicToneMapping } from "three";
 
 const store = createXRStore();
 
@@ -24,14 +25,18 @@ const HomePage = () => {
       <Canvas
         dpr={[1, 2]}
         shadows
-        camera={{ position: [12, 12, 2], fov: 45 }}
-        gl={{ localClippingEnabled: true }}
+        camera={{ position: [50, 50, 50], fov: 45 }}
+        gl={{
+          localClippingEnabled: true,
+          antialias: true,
+          toneMapping: ACESFilmicToneMapping,
+        }}
       >
-        <color attach="background" args={["#f2f2f2"]} />
+        <color attach="background" args={["#303030"]} />
         <Suspense fallback={null}>
           <Perf position="top-left" />
           <Lights />
-          <OrbitControls />
+          {/* <OrbitControls /> */}
           <XR store={store}>
             <Experience />
           </XR>

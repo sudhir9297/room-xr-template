@@ -25,6 +25,7 @@ export default function Slope() {
       if (selectedObjectName === obj.name && obj.type === "Mesh") {
         if (currentTexture.map) {
           const albedoMap = TextureLoader.load(currentTexture.map);
+
           albedoMap.repeat.set(currentTexture.repeatX, currentTexture.repeatY);
           albedoMap.wrapS = THREE.RepeatWrapping;
           albedoMap.wrapT = THREE.RepeatWrapping;
@@ -51,7 +52,6 @@ export default function Slope() {
 
         if (name.includes("ignore")) {
           child.pointerEvents = "none";
-        } else {
         }
 
         if (name[0] === "trimesh") {

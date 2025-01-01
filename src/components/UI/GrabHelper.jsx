@@ -177,7 +177,7 @@ export const DraggableObject = forwardRef(
               paddingX={2}
             >
               <Container
-                width="10%"
+                width="15%"
                 height="100%"
                 justifyContent="center"
                 alignItems="center"
@@ -192,11 +192,11 @@ export const DraggableObject = forwardRef(
                 }}
               >
                 <RotateCcw
-                  width="10"
-                  height="10"
+                  width="8"
+                  height="8"
                   hover={{
-                    width: "12",
-                    height: "12",
+                    width: "10",
+                    height: "10",
                     color: "white",
                   }}
                 />
@@ -237,7 +237,7 @@ export const DraggableObject = forwardRef(
                 height="100%"
               />
               <Container
-                width="10%"
+                width="15%"
                 height="100%"
                 justifyContent="center"
                 alignItems="center"
@@ -252,11 +252,11 @@ export const DraggableObject = forwardRef(
                 onClick={clearSelectedObject}
               >
                 <X
-                  width="10"
-                  height="10"
+                  width="8"
+                  height="8"
                   hover={{
-                    width: "12",
-                    height: "12",
+                    width: "10",
+                    height: "10",
                     color: "white",
                   }}
                 />
@@ -275,14 +275,20 @@ const ProductDetail = () => {
   return (
     <Container
       flexDirection="column"
-      padding={12}
+      padding={4}
       backgroundColor="#f2f2f2"
-      borderRadius={12}
+      borderRadius={10}
+      flexGrow={1}
     >
+      <Container justifyContent="center" paddingBottom={2}>
+        <Text fontSize="8" fontWeight="bold">
+          {selectedObjectData.name}
+        </Text>
+      </Container>
       <Container
-        width="100%"
-        height="100%"
+        flexGrow={1}
         justifyContent="flex-start"
+        alignItems="flex-start"
         gap={4}
         flexWrap="wrap"
         overflow="scroll"
@@ -290,17 +296,27 @@ const ProductDetail = () => {
         scrollbarColor="black"
       >
         {selectedObjectData.textures.map((el, i) => (
-          <Container key={i} flexDirection="column" gap={4} marginBottom={5}>
+          <Container
+            key={i}
+            width="30%"
+            flexDirection="column"
+            gap={2}
+            marginBottom={5}
+            backgroundColor="white"
+            padding={3}
+            borderRadius={6}
+          >
             <Image
-              width="70"
-              height="70"
+              flexGrow={1}
               src={el.map}
               objectFit="cover"
               aspectRatio={1}
               onClick={() => setCurrentTexture(el)}
               borderRadius={6}
             />
-            <Text fontSize="8">{el.name}</Text>
+            <Text paddingX="2" fontSize="6" fontWeight="semi-bold">
+              {el.name}
+            </Text>
           </Container>
         ))}
       </Container>

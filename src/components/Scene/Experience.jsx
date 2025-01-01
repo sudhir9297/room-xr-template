@@ -7,6 +7,8 @@ import Slope from "./Slope";
 import { Player } from "./Player";
 import Scene from "./Scene";
 
+import { Model } from "./Room";
+
 const Experience = () => {
   const { physics } = useControls("World Settings", {
     physics: false,
@@ -16,7 +18,9 @@ const Experience = () => {
     <Physics gravity={[0, -2, 0]} timeStep="vary" debug={physics}>
       {/* <Scene /> */}
 
-      <Slope />
+      {/* <Slope /> */}
+
+      <Model />
 
       <IfInSessionMode allow={"immersive-vr"}>
         <Player />
