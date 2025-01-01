@@ -8,6 +8,7 @@ import { OrbitControls } from "@react-three/drei";
 import Experience from "./Scene/Experience";
 import Lights from "./Light";
 import { Leva } from "leva";
+import UiTest from "./UI/uiTest";
 
 const store = createXRStore();
 
@@ -24,14 +25,15 @@ const HomePage = () => {
       <Canvas
         dpr={[1, 2]}
         shadows
-        camera={{ position: [12, 12, 12], fov: 45 }}
+        camera={{ position: [12, 12, 2], fov: 45 }}
         gl={{ localClippingEnabled: true }}
       >
-        <color attach="background" args={["#171720"]} />
+        <color attach="background" args={["#303030"]} />
         <Suspense fallback={null}>
-          <Perf position="bottom-left" />
+          <Perf position="top-left" />
           <Lights />
-          <OrbitControls />
+          {/* <OrbitControls /> */}
+          {/* <UiTest /> */}
           <XR store={store}>
             <Experience />
           </XR>

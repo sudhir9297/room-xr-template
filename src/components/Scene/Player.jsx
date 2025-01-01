@@ -1,136 +1,153 @@
-import { useFrame } from "@react-three/fiber";
+import { useProgress } from "@react-three/drei";
+import { useFrame, useThree } from "@react-three/fiber";
 import { CapsuleCollider, RigidBody } from "@react-three/rapier";
+
 import { useXRControllerLocomotion, XROrigin } from "@react-three/xr";
-import { useRef } from "react";
-import { Quaternion, Vector3 } from "three";
+import { useEffect, useRef } from "react";
+import { Euler, Quaternion, Vector3 } from "three";
+import { DraggableObject } from "../UI/GrabHelper";
+import { useModelStore } from "@/Store";
 
 export const Player = () => {
-  const userRigidBodyRef = useRef(null);
+  const { progress } = useProgress();
+  const { camera } = useThree();
+  const uiRef = useRef(null);
+  const rigidBodyRef = useRef(null);
   const dragGroupRef = useRef(null);
-  const uiRef = useRef();
-
-  const isDragging = useRef(false);
+  const capsuleRef = useRef(null);
+  const orbitAngle = useRef(0);
+  const OFFSET = { x: 0, y: 0.8, z: -0.9 };
   const lastPosition = useRef(new Vector3());
 
-  const orbitAngle = useRef(0);
-  const ORBIT_RADIUS = 2;
+  const { selectedObject } = useModelStore();
+  const isSelected = Object.keys(selectedObject).length > 0;
 
-  const updateCubePosition = (pointerPosition = null) => {
-    if (!userRigidBodyRef.current || !dragGroupRef.current) return;
+  const prevSelectedObjectRef = useRef();
+  const targetPositionRef = useRef(new Vector3());
 
-    const rigidBodyPosition = userRigidBodyRef.current.translation();
-    let direction;
+  useEffect(() => {
+    if (progress === 100) {
+      resetPlayerPosition();
+    }
+  }, []);
 
-    if (pointerPosition && isDragging.current) {
-      // Calculate angle from pointer position
-      const dx = pointerPosition.x - rigidBodyPosition.x;
-      const dz = pointerPosition.z - rigidBodyPosition.z;
-      orbitAngle.current = Math.atan2(dz, dx);
+  const resetPlayerPosition = () => {
+    if (!rigidBodyRef.current || !capsuleRef.current || !camera) return;
+
+    // Get current VR camera position
+    const cameraPosition = new Vector3().setFromMatrixPosition(camera.matrix);
+
+    if (capsuleRef.current) {
+      camera.position.copy(
+        capsuleRef.current.worldToLocal(cameraPosition.clone())
+      );
+      rigidBodyRef.current.setTranslation(cameraPosition, true);
     }
 
-    // Calculate position using orbital angle
-    direction = new Vector3(
-      Math.cos(orbitAngle.current),
-      0,
-      Math.sin(orbitAngle.current)
-    );
+    updateGroupForUi();
+  };
 
-    direction.multiplyScalar(ORBIT_RADIUS);
+  useEffect(() => {
+    if (!rigidBodyRef.current || !dragGroupRef.current) return;
 
-    lastPosition.current.set(
-      rigidBodyPosition.x + direction.x,
-      rigidBodyPosition.y,
-      rigidBodyPosition.z + direction.z
-    );
+    const prevSelected = prevSelectedObjectRef.current;
+    const currentSelected = selectedObject;
 
-    // Update cube's position and orientation
+    if (prevSelected !== currentSelected) {
+      const cameraDirection = new Vector3(0, 0, -1).applyQuaternion(
+        camera.quaternion
+      );
+      orbitAngle.current = Math.atan2(cameraDirection.z, cameraDirection.x);
+    }
+
+    prevSelectedObjectRef.current = selectedObject;
+  }, [selectedObject]);
+
+  const updateGroupForUi = () => {
+    if (!rigidBodyRef.current || !dragGroupRef.current) return;
+
+    const rigidBodyPosition = rigidBodyRef.current.translation();
+
+    if (Object.keys(selectedObject).length > 0) {
+      const direction = new Vector3(
+        Math.cos(orbitAngle.current),
+        0,
+        Math.sin(orbitAngle.current)
+      );
+      direction.multiplyScalar(Math.abs(OFFSET.z));
+
+      targetPositionRef.current.set(
+        rigidBodyPosition.x + direction.x,
+        rigidBodyPosition.y + OFFSET.y,
+        rigidBodyPosition.z + direction.z
+      );
+    } else {
+      // Use regular offset when no object is selected
+      targetPositionRef.current.set(
+        rigidBodyPosition.x + OFFSET.x,
+        rigidBodyPosition.y + OFFSET.y,
+        rigidBodyPosition.z + OFFSET.z
+      );
+    }
+
+    lastPosition.current.lerp(targetPositionRef.current, 0.1);
     dragGroupRef.current.position.copy(lastPosition.current);
+
     dragGroupRef.current.lookAt(
       rigidBodyPosition.x,
-      rigidBodyPosition.y,
-      rigidBodyPosition.z
-    );
-
-    uiRef.current.lookAt(
-      rigidBodyPosition.x,
-      rigidBodyPosition.y,
+      rigidBodyPosition.y + 0.8,
       rigidBodyPosition.z
     );
   };
 
   useFrame((state, delta) => {
-    if (!isDragging.current) {
-      updateCubePosition();
-    }
+    updateGroupForUi();
   });
 
-  const userMove = (inputVector, rotationInfo) => {
-    if (userRigidBodyRef.current) {
-      const currentLinvel = userRigidBodyRef.current.linvel();
+  const userMove = (inputVector) => {
+    if (rigidBodyRef.current) {
+      const currentLinvel = rigidBodyRef.current.linvel();
       const newLinvel = {
         x: inputVector.x,
         y: currentLinvel.y,
         z: inputVector.z,
       };
-      userRigidBodyRef.current.setLinvel(newLinvel, true);
-      userRigidBodyRef.current.setRotation(
-        new Quaternion().setFromEuler(rotationInfo),
-        true
-      );
+      rigidBodyRef.current.setLinvel(newLinvel, true);
     }
   };
 
   useXRControllerLocomotion(userMove);
-
-  const onPointerDown = (e) => {
-    isDragging.current = true;
-  };
-  const onPointerMove = (e) => {
-    if (
-      isDragging.current &&
-      userRigidBodyRef.current &&
-      dragGroupRef.current
-    ) {
-      updateCubePosition(e.point);
-    }
-  };
-  const onPointerUp = (e) => {
-    isDragging.current = false;
-  };
 
   return (
     <>
       <RigidBody
         colliders={false}
         type="dynamic"
-        position={[0, 1, 0]}
+        position={[0, 2, 0]}
         enabledRotations={[false, false, false]}
         canSleep={false}
-        ref={userRigidBodyRef}
+        ref={rigidBodyRef}
       >
-        <CapsuleCollider args={[0.3, 0.2]} />
-        <XROrigin position={[0, 0, 0]} />
+        <CapsuleCollider args={[0.6, 0.2]} />
+        <XROrigin ref={capsuleRef} position={[0, 0, 0]} />
       </RigidBody>
 
       <group ref={dragGroupRef}>
-        <mesh
-          onPointerDown={onPointerDown}
-          onPointerMove={onPointerMove}
-          onPointerUp={onPointerUp}
-          onPointerOut={onPointerUp}
-          position={[0, 0.3, 0]}
-        >
-          <boxGeometry args={[2, 0.3, 0.02]} />
-          <meshStandardMaterial color="green" />
-        </mesh>
-
-        <group ref={uiRef}>
-          <mesh position={[0, 1, 0]}>
-            <boxGeometry args={[2, 1, 0.05]} />
-            <meshStandardMaterial color="white" />
-          </mesh>
-          {/* <UI /> */}
-        </group>
+        {/* <mesh>
+          <boxGeometry args={[0.05, 0.05, 0.05]} />
+          <meshBasicMaterial color="red" />
+        </mesh> */}
+        {isSelected ? (
+          <DraggableObject
+            dragConstraints={{
+              minY: -1,
+              maxY: 2,
+              minX: -5,
+              maxX: 5,
+            }}
+            rigidBodyRef={rigidBodyRef}
+          />
+        ) : null}
       </group>
     </>
   );
