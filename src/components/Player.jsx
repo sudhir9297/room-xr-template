@@ -4,8 +4,8 @@ import { CapsuleCollider, RigidBody } from "@react-three/rapier";
 
 import { useXRControllerLocomotion, XROrigin } from "@react-three/xr";
 import { useEffect, useRef } from "react";
-import { Vector3 } from "three";
-import { DraggableObject } from "../UI/GrabHelper";
+import { Quaternion, Vector3 } from "three";
+import { UIComponent } from "./UI";
 import { useModelStore } from "@/Store";
 
 export const Player = () => {
@@ -32,7 +32,6 @@ export const Player = () => {
   const resetPlayerPosition = () => {
     if (!rigidBodyRef.current || !capsuleRef.current || !camera) return;
 
-    // Get current VR camera position
     const cameraPosition = new Vector3().setFromMatrixPosition(camera.matrix);
 
     if (capsuleRef.current) {
@@ -98,11 +97,11 @@ export const Player = () => {
     );
   };
 
-  useFrame((state, delta) => {
+  useFrame(() => {
     updateGroupForUi();
   });
 
-  const userMove = (inputVector) => {
+  const userMove = (inputVector, rotationInfo) => {
     if (rigidBodyRef.current) {
       const currentLinvel = rigidBodyRef.current.linvel();
       const newLinvel = {
@@ -111,6 +110,11 @@ export const Player = () => {
         z: inputVector.z,
       };
       rigidBodyRef.current.setLinvel(newLinvel, true);
+      //!not working
+      // rigidBodyRef.current.setRotation(
+      //   new Quaternion().setFromEuler(rotationInfo),
+      //   true
+      // );
     }
   };
 
@@ -130,13 +134,8 @@ export const Player = () => {
       </RigidBody>
 
       <group ref={dragGroupRef}>
-        {/* <mesh>
-          <boxGeometry args={[0.05, 0.05, 0.05]} />
-          <meshBasicMaterial color="red" />
-        </mesh> */}
-
         {selectedObjectName ? (
-          <DraggableObject
+          <UIComponent
             dragConstraints={{
               minY: -1,
               maxY: 2,

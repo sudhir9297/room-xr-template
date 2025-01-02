@@ -3,7 +3,7 @@ import { Container, Image, Root, Text } from "@react-three/uikit";
 import { GripVertical, RotateCcw, X } from "@react-three/uikit-lucide";
 import { forwardRef, useCallback, useRef, useState } from "react";
 import { Vector3 } from "three";
-import { Separator } from "../default/separator";
+import { Separator } from "./default/separator";
 import { useModelStore } from "@/Store";
 
 // Create vectors outside component to avoid recreating them
@@ -13,12 +13,11 @@ const offset = new Vector3();
 const targetPosition = new Vector3();
 const currentPosition = new Vector3();
 
-export const DraggableObject = forwardRef(
+export const UIComponent = forwardRef(
   (
     {
       children,
-      onDragStart,
-      onDragEnd,
+
       onDrag,
       dragConstraints,
       rigidBodyRef,
@@ -65,25 +64,16 @@ export const DraggableObject = forwardRef(
         setIsDragging(true);
         e.target.setPointerCapture(e.pointerId);
 
-        // Calculate and store the offset between click point and object position
         tempVector.copy(e.point);
         objectRef.current.parent?.worldToLocal(tempVector);
         offset.copy(objectRef.current.position).sub(tempVector);
 
-        // Store initial position
         dragStartPosition.current.copy(objectRef.current.position);
         grabbedPosition.copy(e.point);
 
-        // Initialize target position
         targetPosition.copy(objectRef.current.position);
-
-        onDragStart?.({
-          point: e.point,
-          object: objectRef.current,
-          event: e,
-        });
       },
-      [isDragging, onDragStart]
+      [isDragging]
     );
 
     const onPointerUp = useCallback(
@@ -92,15 +82,8 @@ export const DraggableObject = forwardRef(
 
         e.target.releasePointerCapture(e.pointerId);
         setIsDragging(false);
-
-        onDragEnd?.({
-          point: e.point,
-          object: objectRef.current,
-          event: e,
-          dragStartPosition: dragStartPosition.current,
-        });
       },
-      [isDragging, onDragEnd]
+      [isDragging]
     );
 
     const onPointerMove = useCallback(
@@ -115,15 +98,8 @@ export const DraggableObject = forwardRef(
         // Apply constraints to target
         constrainPosition(tempVector);
         targetPosition.copy(tempVector);
-
-        onDrag?.({
-          point: e.point,
-          object: objectRef.current,
-          event: e,
-          dragStartPosition: dragStartPosition.current,
-        });
       },
-      [isDragging, onDrag, constrainPosition]
+      [isDragging, constrainPosition]
     );
 
     useFrame(() => {
@@ -185,7 +161,7 @@ export const DraggableObject = forwardRef(
                 borderTopLeftRadius={12}
                 borderBottomLeftRadius={12}
                 backgroundColor={0xffffff}
-                backgroundOpacity={0.5}
+                backgroundOpacity={0.8}
                 hover={{
                   backgroundOpacity: 1,
                   backgroundColor: "#FFC107",
@@ -212,7 +188,7 @@ export const DraggableObject = forwardRef(
                 justifyContent="center"
                 alignItems="center"
                 backgroundColor={0xffffff}
-                backgroundOpacity={0.5}
+                backgroundOpacity={0.8}
                 height="100%"
                 hover={{
                   backgroundOpacity: 1,
@@ -244,7 +220,7 @@ export const DraggableObject = forwardRef(
                 borderTopRightRadius={12}
                 borderBottomRightRadius={12}
                 backgroundColor={0xffffff}
-                backgroundOpacity={0.5}
+                backgroundOpacity={0.8}
                 hover={{
                   backgroundOpacity: 1,
                   backgroundColor: "#FF4C4C",
@@ -275,7 +251,7 @@ const ProductDetail = () => {
   return (
     <Container
       flexDirection="column"
-      padding={4}
+      padding={8}
       backgroundColor="#f2f2f2"
       borderRadius={10}
       flexGrow={1}
