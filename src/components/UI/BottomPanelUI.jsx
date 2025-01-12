@@ -45,34 +45,10 @@ export const BottomPanelLayout = forwardRef(
     };
 
     const IconList = [
-      <Sun
-        width="10"
-        height="10"
-        hover={{
-          color: "white",
-        }}
-      />,
-      <ShoppingBagIcon
-        width="10"
-        height="10"
-        hover={{
-          color: "white",
-        }}
-      />,
-      <Settings
-        width="10"
-        height="10"
-        hover={{
-          color: "white",
-        }}
-      />,
-      <LogOut
-        width="10"
-        height="10"
-        hover={{
-          color: "white",
-        }}
-      />,
+      <Sun width="8" height="8" color="white" />,
+      <ShoppingBagIcon width="8" height="8" color="white" />,
+      <Settings width="8" height="8" color="white" />,
+      <LogOut width="8" height="8" color="white" />,
     ];
 
     return (
@@ -88,47 +64,40 @@ export const BottomPanelLayout = forwardRef(
         >
           <Container
             backgroundColor="white"
-            backgroundOpacity="0.5"
             height="50%"
             width="100%"
             justifyContent="center"
             alignItems="center"
-            gap="6"
-            borderRadius="12"
+            gap="4"
+            borderRadius="8"
+            backgroundOpacity="0.25"
+            borderWidth="0.3"
+            borderColor="grey"
+            borderOpacity="0.5"
           >
             <Container
-              padding="4"
+              width="15"
+              height="15"
               justifyContent="center"
               alignItems="center"
               borderRadius={4}
-              backgroundColor={"white"}
-              backgroundOpacity={0.9}
-              onClick={resetUI}
               hover={{
-                backgroundOpacity: 1,
-                backgroundColor: "#0064e0",
+                backgroundColor: "#2D82fe",
               }}
+              onClick={resetUI}
             >
-              <RotateCcw
-                width="10"
-                height="10"
-                hover={{
-                  color: "white",
-                }}
-              />
+              <RotateCcw width="8" height="8" color="white" />
             </Container>
             {IconList.map((el, idx) => (
               <Container
                 key={idx}
-                padding="4"
+                width="15"
+                height="15"
                 justifyContent="center"
                 alignItems="center"
                 borderRadius={4}
-                backgroundColor={"white"}
-                backgroundOpacity={0.9}
                 hover={{
-                  backgroundOpacity: 1,
-                  backgroundColor: "#FFC107",
+                  backgroundColor: "#2D82fe",
                 }}
               >
                 {el}
@@ -146,12 +115,12 @@ export const BottomPanelLayout = forwardRef(
           >
             <Container
               width="20%"
-              height="20%"
+              height="15%"
               backgroundColor="white"
               borderRadius="12"
               hover={{
                 width: "20.5%",
-                height: "20.5%",
+                height: "15.5%",
               }}
             />
           </Container>

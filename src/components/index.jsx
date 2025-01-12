@@ -8,7 +8,22 @@ import Experience from "./Experience";
 import Lights from "./Light";
 import InitialPage from "./InitialPage";
 
-const store = createXRStore();
+const store = createXRStore({
+  controller: {
+    touchPointer: false,
+    grabPointer: false,
+    rayPointer: {
+      minDistance: 0,
+    },
+  },
+  hand: {
+    touchPointer: false,
+    grabPointer: false,
+    rayPointer: {
+      minDistance: 0,
+    },
+  },
+});
 
 const HomePage = () => {
   return (

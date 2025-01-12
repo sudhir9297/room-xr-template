@@ -3,6 +3,7 @@ import { Vector3 } from "three";
 
 const tempVector = new Vector3();
 const offset = new Vector3();
+let grabbingPointerId = undefined;
 
 export const useDragObject = (child, dragConstraints) => {
   const isDragging = useRef(false);
@@ -33,6 +34,7 @@ export const useDragObject = (child, dragConstraints) => {
   const onPointerDown = useCallback(
     (e) => {
       e.stopPropagation();
+      grabbingPointerId = e.pointerId;
       isDragging.current = true;
       e.target.setPointerCapture(e.pointerId);
 
@@ -47,8 +49,8 @@ export const useDragObject = (child, dragConstraints) => {
 
   const onPointerUp = useCallback(
     (e) => {
-      if (!isDragging.current) return;
-
+      if (!isDragging.current && grabbingPointerId != e.pointerId) return;
+      grabbingPointerId = undefined;
       e.target.releasePointerCapture(e.pointerId);
       isDragging.current = false;
     },

@@ -53,7 +53,7 @@ export const Player = () => {
       0,
       Math.sin(orbitAngle.current)
     );
-    direction.multiplyScalar(Math.abs(-0.8));
+    direction.multiplyScalar(Math.abs(-0.6));
     direction.y = initialHeight.current;
 
     targetPosition.current.copy(direction);
@@ -80,7 +80,7 @@ export const Player = () => {
         <CapsuleCollider args={[0.6, 0.2]} />
         <XROrigin ref={capsuleRef} position={[0, 0, 0]} />
 
-        <group ref={groupRef} position={[0, 0.8, -0.8]}>
+        <group ref={groupRef} position={[0, 0.8, -0.6]}>
           {/* <mesh>
             <boxGeometry args={[0.05, 0.05, 0.05]} />
             <meshStandardMaterial color="red" />

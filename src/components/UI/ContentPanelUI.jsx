@@ -1,7 +1,7 @@
 import { useFrame } from "@react-three/fiber";
 import { Container, Image, Root, Text } from "@react-three/uikit";
 import { GripVertical, RotateCcw, X } from "@react-three/uikit-lucide";
-import { forwardRef, useRef } from "react";
+import { forwardRef, useEffect, useRef } from "react";
 import { Vector3 } from "three";
 import { Separator } from "../default/separator";
 import { useModelStore } from "@/Store";
@@ -31,7 +31,7 @@ export const ContentPanelUI = forwardRef(
 
       panelRef.current.lookAt(
         rigidBodyPosition.x,
-        rigidBodyPosition.y + 1.2,
+        rigidBodyPosition.y + 0.8,
         rigidBodyPosition.z
       );
     });
@@ -65,12 +65,12 @@ export const ContentPanelUI = forwardRef(
           >
             <Container
               width="20%"
-              height="20%"
+              height="15%"
               backgroundColor="white"
               borderRadius="12"
               hover={{
                 width: "20.5%",
-                height: "20.5%",
+                height: "15.5%",
               }}
             />
           </Container>
@@ -81,27 +81,40 @@ export const ContentPanelUI = forwardRef(
 );
 
 const ProductDetail = ({ resetUI }) => {
+  const containerRef = useRef();
   const { selectedObjectData, setCurrentTexture, clearSelectedObject } =
     useModelStore();
+
+  useEffect(() => {
+    if (containerRef.current) {
+      containerRef.current.scrollPosition.value = [0, 0];
+    }
+    return () => {};
+  }, [selectedObjectData]);
 
   return (
     <Container
       flexDirection="column"
       flexGrow={1}
-      borderRadius={12}
-      padding="8"
+      borderRadius={8}
+      padding="6"
       backgroundColor="white"
-      backgroundOpacity="0.5"
+      backgroundOpacity="0.25"
+      borderWidth="0.3"
+      borderColor="grey"
+      borderOpacity="0.5"
     >
       <Container
         flexGrow={1}
-        justifyContent="flex-start"
-        alignItems="flex-start"
-        gap={4}
-        flexWrap="wrap"
         overflow="scroll"
         scrollbarWidth={1}
-        scrollbarColor="black"
+        scrollbarColor="white"
+        width="100%"
+        justifyContent="flex-start"
+        alignItems="flex-start"
+        flexWrap="wrap"
+        gap={4}
+        ref={containerRef}
       >
         {selectedObjectData.textures.map((el, i) => (
           <Container
@@ -111,8 +124,15 @@ const ProductDetail = ({ resetUI }) => {
             gap={2}
             marginBottom={5}
             backgroundColor="white"
+            backgroundOpacity="0.4"
             padding={3}
             borderRadius={6}
+            borderWidth="0.3"
+            borderColor="grey"
+            borderOpacity="0.5"
+            hover={{
+              borderWidth: "0.8",
+            }}
           >
             <Image
               flexGrow={1}
@@ -122,53 +142,50 @@ const ProductDetail = ({ resetUI }) => {
               onClick={() => setCurrentTexture(el)}
               borderRadius={6}
             />
-            <Text paddingX="2" fontSize="6" fontWeight="semi-bold">
+            <Text
+              paddingX="2"
+              fontSize="6"
+              fontWeight="semi-bold"
+              color="white"
+            >
               {el.name}
             </Text>
           </Container>
         ))}
       </Container>
-      <Container justifyContent="center" paddingTop={5}>
+      <Container justifyContent="center" paddingTop={4} paddingBottom={1}>
         <Container
-          width="10%"
-          height="100%"
+          width="15"
+          height="15"
           justifyContent="center"
           alignItems="center"
+          borderRadius="5"
+          hover={{
+            backgroundColor: "#2D82fe",
+          }}
           onClick={resetUI}
         >
-          <RotateCcw
-            width="8"
-            height="8"
-            hover={{
-              width: "10",
-              height: "10",
-              color: "white",
-            }}
-          />
+          <RotateCcw width="8" height="8" color="white" />
         </Container>
 
         <Container flexGrow={1} alignItems="center" justifyContent="center">
-          <Text fontSize="8" fontWeight="bold">
+          <Text fontSize="8" fontWeight="bold" color="white">
             {selectedObjectData.name}
           </Text>
         </Container>
 
         <Container
-          width="10%"
-          height="100%"
+          width="15"
+          height="15"
           justifyContent="center"
           alignItems="center"
+          borderRadius="5"
+          hover={{
+            backgroundColor: "#FF5958",
+          }}
           onClick={clearSelectedObject}
         >
-          <X
-            width="8"
-            height="8"
-            hover={{
-              width: "10",
-              height: "10",
-              color: "white",
-            }}
-          />
+          <X width="8" height="8" color="white" />
         </Container>
       </Container>
     </Container>
