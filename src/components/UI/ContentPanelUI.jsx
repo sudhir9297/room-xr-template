@@ -1,9 +1,8 @@
 import { useFrame } from "@react-three/fiber";
 import { Container, Image, Root, Text } from "@react-three/uikit";
-import { GripVertical, RotateCcw, X } from "@react-three/uikit-lucide";
+import { RotateCcw, X } from "@react-three/uikit-lucide";
 import { forwardRef, useEffect, useRef } from "react";
 import { Vector3 } from "three";
-import { Separator } from "../default/separator";
 import { useModelStore } from "@/Store";
 import { useCombinedRefs } from "@/constant/utils";
 import { useDragObject } from "@/hooks/useDragObject";

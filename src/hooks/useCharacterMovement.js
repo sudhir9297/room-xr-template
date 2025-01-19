@@ -14,26 +14,23 @@ export const useCharacterMovement = (
   const handleMovement = (inputVector, rotationInfo) => {
     if (!rigidBodyRef.current) return;
 
-    // Check if there's actual movement
     const isActuallyMoving =
       Math.abs(inputVector.x) > 0.01 ||
       Math.abs(inputVector.z) > 0.01 ||
       (rotationInfo !== undefined && Math.abs(rotationInfo) > 0.01);
 
-    // Update movement state
     if (isActuallyMoving) {
       setIsMoving(true);
-      // Clear any existing timeout
+
       if (movementTimeoutRef.current) {
         clearTimeout(movementTimeoutRef.current);
       }
-      // Set new timeout to stop movement state
+
       movementTimeoutRef.current = setTimeout(() => {
         setIsMoving(false);
-      }, 150); // Small delay to prevent flickering
+      }, 150);
     }
 
-    // Handle linear velocity
     const currentLinvel = rigidBodyRef.current.linvel();
     const newLinvel = {
       x: inputVector.x,
@@ -42,7 +39,6 @@ export const useCharacterMovement = (
     };
     rigidBodyRef.current.setLinvel(newLinvel, true);
 
-    // Handle rotation with accumulation
     if (rotationInfo !== undefined) {
       accumulatedRotationRef.current += rotationInfo;
 
@@ -77,7 +73,6 @@ export const useCharacterMovement = (
     }
   };
 
-  // Cleanup timeout on unmount
   useEffect(() => {
     return () => {
       if (movementTimeoutRef.current) {
@@ -86,7 +81,6 @@ export const useCharacterMovement = (
     };
   }, []);
 
-  // Apply XR controller locomotion
   useXRControllerLocomotion(handleMovement);
 
   return {
@@ -97,6 +91,6 @@ export const useCharacterMovement = (
     resetAll,
     setInitialPosition,
     getCurrentPosition: () => rigidBodyRef.current?.translation(),
-    isMoving, // New state exposed
+    isMoving,
   };
 };
